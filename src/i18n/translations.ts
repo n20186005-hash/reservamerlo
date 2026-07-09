@@ -8,13 +8,39 @@ export type Translations = {
   hero: { tags: string[]; tagline: string; title: string; subtitle: string; cta: string; description: { address: string; phone: string; category: string } };
   rating: { reviews: string; source: string };
   history: { title: string; intro: string };
+  heritage: { title: string; intro: string; cards: { title: string; content: string; items?: string[] }[]; tip: string };
   myths: { title: string; intro: string; items: { title: string; content: string }[] };
   curiosities: { title: string; content: string };
-  eco: { title: string; intro: string; items: string[] };
+  eco: {
+    title: string;
+    intro: string;
+    items: string[];
+    ecoregion: {
+      eyebrow: string;
+      title: string;
+      intro: string;
+      floraTitle: string;
+      flora: { name: string; latin: string; note: string }[];
+      faunaTitle: string;
+      fauna: { name: string; latin: string; note: string }[];
+      closing: string;
+    };
+  };
   architecture: { title: string; intro: string; specs: { structure: { title: string; content: string }; design: { title: string; content: string }; optics: { title: string; content: string } }; plaque: { title: string; items: { label: string; value: string }[] } };
   monuments: { title: string; intro: string; items: { name: string; description: string }[] };
   contrast: { title: string; intro: string; before: string; after: string };
-  visiting: { title: string; intro: string; hours: { title: string; content: string; note: string }; price: { title: string; content: string; note: string }; duration: { title: string; content: string; note: string }; tips: { title: string; items: string[] }; essentials: { icon: string; title: string; text: string }[] };
+  visiting: {
+    title: string;
+    intro: string;
+    accessibility: { title: string; items: string[]; note: string };
+    safety: { title: string; items: string[]; note: string };
+    lnt: { eyebrow: string; title: string; intro: string; principles: { title: string; text: string }[]; note: string };
+    hours: { title: string; content: string; note: string };
+    price: { title: string; content: string; note: string };
+    duration: { title: string; content: string; note: string };
+    tips: { title: string; items: string[] };
+    essentials: { icon: string; title: string; text: string }[];
+  };
   transportation: { title: string; airport: { title: string; content: string; options: TransportOption[] }; publicTransport?: { title: string; content: string; options: { name: string; description: string; steps: string[] }[] }; city: { title: string; content: string; steps: string[] }; tips: { title: string; items: string[] } };
   gallery: { title: string; viewMore: string; categories: { key: string; label: string }[] };
   reviews: { title: string; subtitle: string; viewMore: string; nearbyTitle: string; nearbyIntro: string; nearbyItems: { name: string; description: string }[] };
@@ -110,6 +136,24 @@ A diferencia de un parque público tradicional, Rincón del Este es una reserva 
 Merlo, puerta de las sierras
 La localidad de Merlo —fundada en 1797— es el punto de partida natural para conocer la Reserva. Desde allí, un corto trayecto conduce a El Rincón, donde la reserva abre sus senderos al público. Por eso la historia de Rincón del Este no se entiende sin la de Merlo y de los pueblos originarios que habitaron estas sierras mucho antes que la villa.`
     },
+    heritage: {
+      title: `Herencia comechingón: vida cotidiana en la piedra`,
+      intro: `Mucho antes de la fundación de Merlo (1797), estas sierras ya eran un hogar con memoria. En el territorio comechingón, el paisaje no solo se recorre: también se lee, en la roca, en los morteros y en los modos de habitar.`,
+      cards: [
+        {
+          title: `Casas pozo (viviendas semisubterráneas)`,
+          content: `Para resistir el frío nocturno y el viento serrano, muchas familias no levantaban paredes altas: excavaban el suelo y usaban la tierra como aislante térmico.
+\nUn modo de arquitectura discreta, hecha para la amplitud térmica de la sierra.`,
+          items: [`Excavación de alrededor de 1 m`, `Techo con ramas, madera y barro`, `La tierra funciona como abrigo`],
+        },
+        {
+          title: `Conanas: morteros tallados en la roca`,
+          content: `En grandes afloramientos de granito pueden aparecer cavidades circulares talladas a mano: se conocen como **conanas**. Fueron parte de una cocina al aire libre y de una tecnología de subsistencia.`,
+          items: [`Molienda de vainas de algarrobo para harina (patay)`, `Bebidas fermentadas (aloja)`, `Registro sin tocar: la grasa de las manos acelera el desgaste`],
+        },
+      ],
+      tip: `Si encontrás conanas o pinturas rupestres, registralas con ojos y cámara. Evitá pisarlas o tocarlas: su química es frágil y la erosión se acelera con intervenciones mínimas.`,
+    },
     myths: {
       title: `Historia, pueblos y leyendas`,
       intro: `Las Sierras de los Comechingones guardan una de las huellas culturales más antiguas de la región. Antes de la colonización, estos cerros fueron territorio de los **comechingones**, cazadores recolectores que dejaron su marca en piedra y en la memoria del lugar.`,
@@ -158,7 +202,26 @@ La región forma parte del sistema de sierras donde anida el **cóndor andino**.
         `Respetá la flora: no cortes ramas ni extraigas plantas, semillas o piedras`,
         `Sos fuego y humo: está prohibido hacer fuego en el monte; un solo descuido basta para un incendio`,
         `Apoyá lo local: preferí guías y prestadores de Merlo, y compartí el cuidado del lugar`
-      ]
+      ],
+      ecoregion: {
+        eyebrow: `Ecorregión`,
+        title: `Chaco Serrano (Ecorregión Chaco Serrano)`,
+        intro: `El monte que rodea a Rincón del Este no es “cualquier bosque”: forma parte del **Chaco Serrano**, una ecorregión de transición entre llanura y sierra. Su biodiversidad depende de un equilibrio delicado entre sequedad, suelos someros y cursos de agua estacionales.`,
+        floraTitle: `Plantas xerófitas`,
+        flora: [
+          { name: `Algarrobo`, latin: `Prosopis alba`, note: `Especie estructural del monte; sus vainas alimentan fauna y sus raíces ayudan a sostener el suelo y las nacientes.` },
+          { name: `Chañar`, latin: `Geoffroea decorticans`, note: `En zonas secas, su corteza y su fisiología minimizan la pérdida de agua.` },
+          { name: `Molle`, latin: `Lithraea molleoides`, note: `Hojas resistentes y aceites que reducen evaporación; típico del monte serrano.` },
+          { name: `Jarilla`, latin: `Larrea spp.`, note: `Arbusto emblema de la aridez, con hojas pequeñas y cerosas que toleran radiación intensa.` },
+        ],
+        faunaTitle: `Fauna clave`,
+        fauna: [
+          { name: `Cóndor andino`, latin: `Vultur gryphus`, note: `El horizonte serrano pertenece a sus corrientes de aire; observar sin perturbar es parte del respeto.` },
+          { name: `Ñandú / choique`, latin: `Rhea americana`, note: `Aparece en relatos locales; su presencia recuerda el valor de los pastizales y claros del monte.` },
+          { name: `Vizcacha`, latin: `Lagostomus maximus`, note: `Madrigueras entre rocas; más activa al amanecer y al atardecer.` },
+        ],
+        closing: `En esta ecorregión, el agua y el suelo se pierden rápido si el tránsito se expande fuera del sendero. Cada visita cuidadosa es una forma concreta de conservación.`,
+      },
     },
     architecture: {
       title: `Paisaje y Ecología`,
@@ -197,14 +260,48 @@ Proteger las nacientes es, por tanto, proteger a toda la fauna. Por eso la reser
       ]
     },
     contrast: {
-      title: `Bosque nativo y cielo abierto`,
-      intro: `La belleza de Rincón del Este está en el contraste entre lo que crece y lo que se ve. Bajo el follaje del monte, la vida se esconde; arriba, la sierra abre un cielo inmenso. Dos caras de un mismo refugio.`,
+      title: `Bosque nativo y arroyos de sierra`,
+      intro: `La belleza de Rincón del Este está en el contraste entre lo que crece y lo que fluye. Bajo el follaje del monte, la vida se esconde; entre las rocas, el agua reúne sombra, frescura y movimiento. Dos caras de un mismo refugio.`,
       before: `Bosque Nativo`,
-      after: `Cielo de la Sierra`
+      after: `Arroyos de la Sierra`
     },
     visiting: {
       title: `Planificá tu Visita`,
       intro: `La reserva se visita todo el año, aunque la primavera y el otoño son las estaciones más cómodas. Una mañana o una tarde alcanzan para recorrer los senderos principales. Lo siguiente ayuda a planificar.`,
+      accessibility: {
+        title: `Accesibilidad`,
+        items: [
+          `Superficie natural: buena parte del recorrido es de tierra, piedra suelta y zonas con desnivel`,
+          `Cochecito y silla de ruedas: puede haber tramos no aptos; consultá en el centro de recepción por alternativas`,
+          `Ritmo recomendado: la experiencia es mejor si se camina lento y con paradas de sombra`,
+        ],
+        note: `Si viajás con movilidad reducida, pedí en el ingreso la ruta más amable y las áreas de descanso habilitadas.`,
+      },
+      safety: {
+        title: `Seguridad y emergencias`,
+        items: [
+          `Sol y calor: radiación alta y aire seco; hidratación y protección son esenciales`,
+          `Rocas y agua: tras lluvias, los arroyos y piedras se vuelven resbaladizos`,
+          `Señal: en zonas de sierra la conectividad puede ser inestable`,
+          `Contacto del predio: +542664361087 (horarios y orientación del día)`,
+        ],
+        note: `Ante una emergencia, priorizá avisar al personal del lugar y seguir la señalización y las indicaciones del día.`,
+      },
+      lnt: {
+        eyebrow: `Leave No Trace`,
+        title: `Visitar sin dejar rastro`,
+        intro: `Los principios de **Leave No Trace (LNT)** resumen una ética sencilla: explorar sin aumentar la huella. En un monte frágil, la conservación empieza en los pasos.`,
+        principles: [
+          { title: `Planificá y preparate`, text: `Agua, protección solar, calzado y horarios. Reducí improvisaciones que terminan dañando el entorno.` },
+          { title: `Caminá por superficies resistentes`, text: `Mantenete en senderos habilitados. Fuera de ellos, el suelo y la vegetación se degradan rápido.` },
+          { title: `Gestioná los residuos`, text: `Todo vuelve con vos: basura, orgánicos y colillas. No dejes “pequeños” restos.` },
+          { title: `Dejá lo que encuentres`, text: `No te lleves piedras, plantas ni fragmentos de historia. Fotografiar es suficiente.` },
+          { title: `Evitá el fuego`, text: `El monte seco arde con facilidad. Respetá la prohibición de fogones.` },
+          { title: `Respetá la fauna`, text: `No alimentes animales y mantené distancia, sobre todo en época de cría.` },
+          { title: `Cuidá el silencio`, text: `Bajá el volumen. La tranquilidad es parte del hábitat y de la experiencia.` },
+        ],
+        note: `LNT complementa las normas del área: en caso de duda, la señalización y el personal del lugar tienen prioridad.`,
+      },
       hours: { title: `Horario`, content: `La reserva abre en horario diurno, generalmente de **10:00 a 20:00**.\nLas primeras horas de la mañana y el atardecer son los mejores momentos para ver fauna y para la fotografía.`, note: `El horario puede ajustarse por temporada o eventos; confirmá por teléfono (+542664361087) antes de tu visita.` },
       price: { title: `Ingreso`, content: `El ingreso suele tener una contribución simbólica de conservación y mantenimiento, que se abona en la entrada.\nLos montos se informan en el lugar; llevá efectivo por si las redes fallan en la sierra.`, note: `Consultá si hay tarifas diferenciadas para escolares, jubilados o residentes de Merlo.` },
       duration: { title: `Duración sugerida`, content: `Recorrido de senderos principales + mirador: unas **2 a 4 horas**.\nSumando picnic y avistamiento pausado, podés pasar la mañana o la tarde completa.`, note: `Combiná con Villa de Merlo y el Valle de Conlara para armar una escapada de 1 a 2 días en la región.` },
@@ -276,7 +373,7 @@ Proteger las nacientes es, por tanto, proteger a toda la fauna. Por eso la reser
       { question: `¿Qué debo llevar para visitar Rincón del Este?`, answer: `Llevá sombrero, lentes y protector solar (la radiación en Merlo es muy alta), al menos 1 L de agua por persona, calzado cerrado, repelente en primavera/verano y, si te gustan las aves, binoculares. Llegá temprano para ver más fauna.` }
     ]},
     location: { title: `Ubicación en el Mapa`, address: `Rincón del Este, El Rincón\nMerlo, Provincia de San Luis\nArgentina`, openMaps: `Ver en Google Maps` },
-    footer: { callToAction: `Rincón del Este es uno de los refugios de flora y fauna más queridos de Merlo, un equilibrio frágil entre el monte nativo y el cielo de la sierra. Visitemoslo con cuidado para que las próximas generaciones también lo encuentren vivo.`, text: `© 2026 Rincón del Este Guide · Todos los derechos reservados.\nEste sitio es una guía educativa independiente sin fines de lucro dedicada a difundir información precisa sobre la Reserva Florofaunística de Rincón del Este. No estamos afiliados con el gobierno argentino ni con ninguna autoridad oficial.`, made: `Este es un proyecto educativo independiente no profit, creado para amantes de la naturaleza, familias y viajeros slow.`, linksTitle: `Enlaces`, links: LINKS_BY_LOCALE.es },
+    footer: { callToAction: `Rincón del Este es uno de los refugios de flora y fauna más queridos de Merlo, un equilibrio frágil entre el monte nativo y los arroyos de la sierra. Visitemoslo con cuidado para que las próximas generaciones también lo encuentren vivo.`, text: `© 2026 Rincón del Este Guide · Todos los derechos reservados.\nEste sitio es una guía educativa independiente sin fines de lucro dedicada a difundir información precisa sobre la Reserva Florofaunística de Rincón del Este. No estamos afiliados con el gobierno argentino ni con ninguna autoridad oficial.`, made: `Este es un proyecto educativo independiente no profit, creado para amantes de la naturaleza, familias y viajeros slow.`, linksTitle: `Enlaces`, links: LINKS_BY_LOCALE.es },
     siteMap: {
       title: `Mapa de la Reserva`,
       intro: `Pasá el cursor (o tocá) los marcadores del mapa para explorar las áreas clave de Rincón del Este.`,
@@ -336,6 +433,24 @@ Unlike a traditional public park, Rincón del Este is a flora and fauna reserve 
 Merlo, gateway to the hills
 The town of Merlo — founded in 1797 — is the natural starting point to discover the reserve. From there a short drive leads to El Rincón, where the reserve opens its trails to the public. That is why the history of Rincón del Este cannot be told without the history of Merlo and of the Indigenous peoples who lived in these hills long before the village.`
     },
+    heritage: {
+      title: `Comechingón heritage: daily life on stone`,
+      intro: `Long before Merlo was founded (1797), these sierras were already home. Here, the landscape is not only walked: it is also read — in rock, mortars and subtle traces of dwelling.`,
+      cards: [
+        {
+          title: `Casas pozo (semi-underground houses)`,
+          content: `To cope with cold nights and sierra winds, many homes were built partly below ground, using earth as a natural thermal buffer.
+\nA discreet architecture adapted to sharp day–night temperature swings.`,
+          items: [`Around 1 m of excavation`, `Roof of branches, wood and mud`, `Earth acts as insulation`],
+        },
+        {
+          title: `Conanas: rock-cut grinding hollows`,
+          content: `On granite outcrops you may notice circular hollows carved by hand: **conanas**. They functioned as open-air “kitchens” and a practical survival technology.`,
+          items: [`Grinding carob pods into flour (patay)`, `Fermented drinks (aloja)`, `Record without touching: skin oils accelerate weathering`],
+        },
+      ],
+      tip: `If you find conanas or rock art, record with eyes and camera only. Avoid stepping on or touching them: even small interventions speed up erosion.`,
+    },
     myths: {
       title: `History, Peoples and Legends`,
       intro: `The Sierras de los Comechingones hold one of the region's oldest cultural marks. Before colonisation, these mountains were territory of the **comechingones**, hunter-gatherers who left their sign on stone and in the memory of the place.`,
@@ -384,7 +499,26 @@ The region belongs to the mountain system where the **Andean condor** nests. A f
         `Respect the flora: do not cut branches or remove plants, seeds or stones`,
         `No fire or smoke: making fire in the bush is forbidden; one careless moment can cause a wildfire`,
         `Support locals: prefer Merlo guides and providers, and share the care of the place`
-      ]
+      ],
+      ecoregion: {
+        eyebrow: `Ecoregion`,
+        title: `Chaco Serrano (Ecorregión Chaco Serrano)`,
+        intro: `The woodland around Rincón del Este is not just “any forest”: it belongs to the **Chaco Serrano**, a transition ecoregion between plains and sierra. Its biodiversity relies on a delicate balance of dryness, shallow soils and seasonal watercourses.`,
+        floraTitle: `Xerophytic plants`,
+        flora: [
+          { name: `Carob (algarrobo)`, latin: `Prosopis alba`, note: `A structural species of the woodland; pods feed wildlife and deep roots help stabilise soil and springs.` },
+          { name: `Chañar`, latin: `Geoffroea decorticans`, note: `Adapted to aridity with strategies that reduce water loss.` },
+          { name: `Molle`, latin: `Lithraea molleoides`, note: `Tough leaves and oils that help limit evaporation; typical of the sierra woodland.` },
+          { name: `Jarilla`, latin: `Larrea spp.`, note: `An emblem of dry landscapes, with small waxy leaves that tolerate intense radiation.` },
+        ],
+        faunaTitle: `Key fauna`,
+        fauna: [
+          { name: `Andean condor`, latin: `Vultur gryphus`, note: `The sierra skyline belongs to its updrafts; observing without disturbance is part of respect.` },
+          { name: `Rhea / choique`, latin: `Rhea americana`, note: `Present in local stories; a reminder of the value of woodland clearings and grasslands.` },
+          { name: `Vizcacha`, latin: `Lagostomus maximus`, note: `Burrows among rocks; most active at dawn and dusk.` },
+        ],
+        closing: `In this ecoregion, soil and water degrade quickly when foot traffic spreads beyond trails. Every careful visit is a concrete form of conservation.`,
+      },
     },
     architecture: {
       title: `Landscape & Ecology`,
@@ -423,14 +557,48 @@ Protecting the springs therefore means protecting all the wildlife. That is why 
       ]
     },
     contrast: {
-      title: `Native Woodland and Open Sky`,
-      intro: `The beauty of Rincón del Este lies in the contrast between what grows and what is seen. Beneath the woodland canopy, life hides; above, the sierra opens an immense sky. Two faces of one refuge.`,
+      title: `Native Woodland and Mountain Streams`,
+      intro: `The beauty of Rincón del Este lies in the contrast between what grows and what flows. Beneath the woodland canopy, life hides; among the rocks, stream water gathers shade, freshness and movement. Two faces of one refuge.`,
       before: `Native Woodland`,
-      after: `Sierra Sky`
+      after: `Mountain Streams`
     },
     visiting: {
       title: `Plan Your Visit`,
       intro: `The reserve can be visited all year, though spring and autumn are the most comfortable seasons. A morning or an afternoon is enough to walk the main trails. The following helps you plan.`,
+      accessibility: {
+        title: `Accessibility`,
+        items: [
+          `Natural surfaces: much of the route is dirt, loose stone and uneven ground`,
+          `Strollers and wheelchairs: some sections may be unsuitable; ask at reception for gentler alternatives`,
+          `Recommended pace: the visit works best at a slow rhythm with shaded pauses`,
+        ],
+        note: `If you visit with reduced mobility, ask at the gate for the most accessible route and available rest areas.`,
+      },
+      safety: {
+        title: `Safety & contacts`,
+        items: [
+          `Sun and heat: very high radiation and dry air; hydration and protection are essential`,
+          `Rocks and water: after rains, streams and stones become slippery`,
+          `Signal: connectivity can be unstable in the sierra`,
+          `On-site contact: +542664361087 (hours and day-of guidance)`,
+        ],
+        note: `In an emergency, prioritise informing staff and follow the day's signage and instructions.`,
+      },
+      lnt: {
+        eyebrow: `Leave No Trace`,
+        title: `Visit without leaving a trace`,
+        intro: `The principles of **Leave No Trace (LNT)** are a simple ethic: explore without increasing impact. In a fragile woodland, conservation begins with your steps.`,
+        principles: [
+          { title: `Plan ahead and prepare`, text: `Bring water, sun protection, suitable footwear and confirm hours to reduce risky improvisation.` },
+          { title: `Travel on durable surfaces`, text: `Stay on marked trails. Off-trail, soil and vegetation degrade quickly.` },
+          { title: `Dispose of waste properly`, text: `Pack out all waste, including organics and cigarette butts.` },
+          { title: `Leave what you find`, text: `Do not take stones, plants or fragments of history. Photos are enough.` },
+          { title: `Avoid fire`, text: `Dry bushland burns easily. Respect fire restrictions.` },
+          { title: `Respect wildlife`, text: `Do not feed animals and keep distance, especially in breeding season.` },
+          { title: `Be considerate`, text: `Keep noise low. Quiet is part of both habitat and experience.` },
+        ],
+        note: `LNT complements local rules: when in doubt, signage and staff guidance take priority.`,
+      },
       hours: { title: `Opening Hours`, content: `The reserve opens in daytime, generally **10:00 to 20:00**.\nThe early morning and dusk are the best moments to see wildlife and for photography.`, note: `Hours may shift by season or events; call (+542664361087) before your visit to confirm.` },
       price: { title: `Entry`, content: `Entry usually involves a symbolic conservation and maintenance contribution, paid at the gate.\nAmounts are posted on site; carry cash in case networks fail in the sierra.`, note: `Ask about differentiated rates for students, pensioners or Merlo residents.` },
       duration: { title: `Suggested Duration`, content: `Main trails + viewpoint: about **2 to 4 hours**.\nAdding a picnic and slow wildlife watching, you can spend a full morning or afternoon.`, note: `Combine with Villa de Merlo and the Conlara Valley for a 1–2 day regional getaway.` },
@@ -502,7 +670,7 @@ Protecting the springs therefore means protecting all the wildlife. That is why 
       { question: `What should I bring to visit Rincón del Este?`, answer: `Bring a hat, glasses and sunscreen (radiation in Merlo is very high), at least 1 L of water per person, closed footwear, repellent in spring/summer, and binoculars if you like birds. Arrive early to see more wildlife.` }
     ]},
     location: { title: `Map Location`, address: `Rincón del Este, El Rincón\nMerlo, San Luis Province\nArgentina`, openMaps: `View on Google Maps` },
-    footer: { callToAction: `Rincón del Este is one of Merlo's most beloved flora and fauna refuges, a fragile balance between native woodland and sierra sky. Let us visit it with care so that future generations also find it alive.`, text: `© 2026 Rincón del Este Guide · All rights reserved.\nThis website is an independent non-profit educational guide dedicated to sharing accurate information about the Rincón del Este Flora & Fauna Reserve. We are not affiliated with the Argentine government or any official authority.`, made: `This is an independent non-profit educational project, made for nature lovers, families and slow travellers.`, linksTitle: `Links`, links: LINKS_BY_LOCALE.en },
+    footer: { callToAction: `Rincón del Este is one of Merlo's most beloved flora and fauna refuges, a fragile balance between native woodland and mountain streams. Let us visit it with care so that future generations also find it alive.`, text: `© 2026 Rincón del Este Guide · All rights reserved.\nThis website is an independent non-profit educational guide dedicated to sharing accurate information about the Rincón del Este Flora & Fauna Reserve. We are not affiliated with the Argentine government or any official authority.`, made: `This is an independent non-profit educational project, made for nature lovers, families and slow travellers.`, linksTitle: `Links`, links: LINKS_BY_LOCALE.en },
     siteMap: {
       title: `Reserve Map`,
       intro: `Hover over (or tap) the map markers to explore the key areas of Rincón del Este.`,
@@ -562,6 +730,24 @@ Protecting the springs therefore means protecting all the wildlife. That is why 
 梅洛：群山的门户
 梅洛镇始建于 1797 年，是探索保护区最自然的起点。从镇上出发，短短一段车程便抵达 El Rincón，保护区在那里向游客敞开步道。正因如此，Rincón del Este 的故事，离不开梅洛，也离不开那些早在小镇建立之前就栖居于此山的原住民族群。`
     },
+    heritage: {
+      title: `科梅琴戈内斯遗迹：刻在岩石上的日常`,
+      intro: `在梅洛镇建立之前（1797 年以前），科梅琴戈内斯山脉早已是充满烟火气的家园。这里的历史并不只在博物馆里：它还留在岩石的凹槽、山径的转弯处，以及人与自然相处的方式中。`,
+      cards: [
+        {
+          title: `半地穴式房屋（Casas Pozo）`,
+          content: `山区夜晚温度会急剧下降。为了保暖并抵御强风，科梅琴戈内斯人往往把家建在地下：向下挖掘坑穴，顶部以树枝、木头与泥土覆盖，让大地成为天然的保温层。
+\n这是一种“隐身”的建筑智慧，回应的是山脉剧烈的日夜温差。`,
+          items: [`约 1 米深的坑穴结构（规模因地而异）`, `顶部覆以枝木与泥土`, `以地温抵御夜间寒冷与山风`],
+        },
+        {
+          title: `研磨穴（Conanas）：岩盘上的“厨房”`,
+          content: `在山径附近的结晶岩上，你可能会看到人工凿出的圆形深坑——这被称为 **conanas**（研磨穴）。它们用于捣碎植物果荚与种子，也是一种把地貌转化为生活工具的方式。`,
+          items: [`捣碎阿尔加罗沃树（algarrobo）豆荚制成 patay（粉）`, `制作发酵饮料 aloja`, `请仅观察与拍摄：触摸与踩踏会加速风化`],
+        },
+      ],
+      tip: `若发现研磨穴（conanas）、岩画或刻痕，请仅用眼睛与相机记录，切勿触摸或踩踏。遗迹表面极为脆弱，手指油脂也会加速其风化。`,
+    },
     myths: {
       title: `历史、族群与传说`,
       intro: `科梅琴戈内斯山脉留存着本地区最古老的文化印记之一。在殖民之前，这些山岭是**科梅琴戈内斯人（comechingones）**的领地——他们是以狩猎采集为生的族群，把痕迹留在岩石上，也留在了这片土地记忆之中。`,
@@ -610,7 +796,26 @@ Protecting the springs therefore means protecting all the wildlife. That is why 
         `尊重植物：不折枝，不带走植物、种子或石头`,
         `禁火禁烟：山林中严禁生火，一次疏忽便可能引发林火`,
         `支持本地：优先选择梅洛的向导与服务方，共同守护此地`
-      ]
+      ],
+      ecoregion: {
+        eyebrow: `Ecorregión`,
+        title: `查科塞拉诺生态系统（Ecorregión Chaco Serrano）`,
+        intro: `Rincón del Este 所在的“原生丛林”并非泛指的树林，而属于具有过渡性质的 **查科塞拉诺（Chaco Serrano）生态系统**：它连接大查科（Gran Chaco）与山地环境，兼具干旱与溪流并存的特征。这里的生物多样性依赖一种脆弱的平衡：浅薄土壤、强日照与季节性水线，共同决定了“谁能在此生存”。`,
+        floraTitle: `旱生植物（xerofitía）`,
+        flora: [
+          { name: `白牧豆树（Algarrobo）`, latin: `Prosopis alba`, note: `基石物种之一；豆荚为动物提供能量，深根帮助稳固土壤并影响泉眼水线。` },
+          { name: `恰尼亚尔树（Chañar）`, latin: `Geoffroea decorticans`, note: `适应干旱的本地树种，减少水分流失，并在旱季维持生理活动。` },
+          { name: `摩尔树（Molle）`, latin: `Lithraea molleoides`, note: `叶片坚韧，挥发性成分与结构共同降低蒸腾，常见于山地灌木林。` },
+          { name: `哈拉利拉（Jarilla）`, latin: `Larrea spp.`, note: `典型耐旱灌木，叶片小且具蜡质层，能承受强辐射与低湿度。` },
+        ],
+        faunaTitle: `核心动物与食物网`,
+        fauna: [
+          { name: `安第斯神鹰`, latin: `Vultur gryphus`, note: `科梅琴戈内斯山脉的天际线是它的风道；保持距离与安静是最基本的观察礼仪。` },
+          { name: `美洲鸵（ñandú / choique）`, latin: `Rhea americana`, note: `常出现在地方叙事与传说中；它提醒人们：灌丛与空地同样是栖息地。` },
+          { name: `草原兔鼠（vizcacha）`, latin: `Lagostomus maximus`, note: `岩石间群居，清晨与黄昏更活跃。` },
+        ],
+        closing: `在查科塞拉诺生态系统中，土壤与水线一旦被反复踩踏便难以恢复。每一次不偏离步道、每一次不留下垃圾，都是最直接的保护行动。`,
+      },
     },
     architecture: {
       title: `地貌与生态`,
@@ -649,14 +854,48 @@ Protecting the springs therefore means protecting all the wildlife. That is why 
       ]
     },
     contrast: {
-      title: `原生丛林与开阔天空`,
-      intro: `Rincón del Este 的美，在于"生长之物"与"所见之景"的对照。丛林树冠之下，生命藏匿；头顶之上，群山敞开无垠的天空。同一处庇护地的两面。`,
+      title: `原生丛林与山间溪流`,
+      intro: `Rincón del Este 的美，在于"生长之物"与"流动之水"的对照。丛林树冠之下，生命藏匿；岩石之间，溪流汇聚出阴影、清凉与声音。同一处庇护地的两面。`,
       before: `原生丛林`,
-      after: `群山天空`
+      after: `山间溪流`
     },
     visiting: {
       title: `参观信息指南`,
       intro: `保护区全年可访，但春季与秋季最为舒适。一个上午或一个下午，便足以走完主要步道。以下信息帮助你从容规划。`,
+      accessibility: {
+        title: `无障碍与可达性`,
+        items: [
+          `地面为自然路况：多为土路、碎石与不平整岩面，局部可能有坡度与台阶`,
+          `轮椅与婴儿车：不保证全程可通行；建议在接待中心询问当日最可达路线`,
+          `节奏建议：放慢脚步，利用林下阴影与休息点，避免中午暴晒时段长距离行走`,
+        ],
+        note: `如需无障碍信息或同行者行动不便，请在入园前致电咨询并在入口确认路线与可用设施。`,
+      },
+      safety: {
+        title: `安全与紧急联络`,
+        items: [
+          `强紫外线与干燥：补水与防晒是硬指标`,
+          `溪流与岩石：雨后水线增大、岩面湿滑，请避免涉水与攀爬湿岩`,
+          `信号与导航：山区信号可能不稳，不建议离开标识步道`,
+          `联系：+542664361087（开放情况与当日指引）`,
+        ],
+        note: `如遇突发情况，优先联系现场接待中心与向导，并遵循当日标识与管理方指引。`,
+      },
+      lnt: {
+        eyebrow: `Leave No Trace`,
+        title: `无痕山林（Leave No Trace, LNT）`,
+        intro: `**无痕山林（LNT）**并不是一句口号，而是一套国际通用的野外伦理：在不增加环境负担的前提下探访自然。对查科塞拉诺这样的脆弱生态系统而言，LNT 是最可操作的“保护方法”。`,
+        principles: [
+          { title: `提前规划`, text: `确认开放时间、备足饮水与防晒用品，减少临时绕路与不必要的踩踏。` },
+          { title: `不偏离步道`, text: `只走已开放的小径；离开步道会破坏土壤结皮与幼苗。` },
+          { title: `垃圾带走`, text: `所有垃圾（含果皮、纸巾与烟头）必须带离。` },
+          { title: `不取走遗物`, text: `不采摘植物、不带走石头与遗迹碎片；用照片记录即可。` },
+          { title: `不生火`, text: `干燥山林火险高；严格遵守禁火规定。` },
+          { title: `尊重野生动物`, text: `不投喂，保持距离，尤其在繁殖季与清晨黄昏活动高峰。` },
+          { title: `保持安静`, text: `降低噪音，避免惊扰动物，也让他人获得更完整的体验。` },
+        ],
+        note: `LNT 与保护区规则相互补充：如有冲突，以现场标识与管理方要求为准。`,
+      },
       hours: { title: `开放时间`, content: `保护区在白天开放，通常为 **10:00 至 20:00**。\n清晨与黄昏是观察野生动物与摄影的最佳时段。`, note: `开放时间可能因季节或活动调整；出行前请电话（+542664361087）确认。` },
       price: { title: `入园`, content: `入园通常收取一笔象征性的保护与维护费用，于入口处缴纳。\n具体金额以现场公示为准；山区网络可能不稳，建议携带现金。`, note: `可咨询学生、退休者或梅洛居民是否有优惠票价。` },
       duration: { title: `建议游览时长`, content: `主要步道 + 观景台：约 **2 至 4 小时**。\n若加上野餐与从容的观鸟，可消磨整个上午或下午。`, note: `可与梅洛镇、孔拉拉山谷（Conlara Valley）串联，安排 1–2 日区域游。` },
@@ -728,7 +967,7 @@ Protecting the springs therefore means protecting all the wildlife. That is why 
       { question: `参观 Rincón del Este 需要带什么？`, answer: `请携带宽檐帽、墨镜与防晒霜（梅洛紫外线极强）、每人至少 1 升饮水、包裹性好的鞋、春夏驱虫剂；若喜欢鸟类，带上双筒望远镜。早到能看到更多动物。` }
     ]},
     location: { title: `地图位置`, address: `Rincón del Este, El Rincón\n梅洛, 圣路易斯省\n阿根廷`, openMaps: `在 Google Maps 查看位置` },
-    footer: { callToAction: `Rincón del Este 是梅洛最受人珍爱的动植物庇护地之一，是原生丛林与群山天空之间脆弱的平衡。请带着呵护之心探访，让下一代也能见到它生机勃勃的模样。`, text: `© 2026 Rincón del Este 指南 · 保留所有权利。\n本网站是一个独立的第三方非盈利科普指南项目，致力于准确传播 Rincón del Este 动植物保护区的信息。我们与阿根廷政府或任何官方机构均无隶属关系。`, made: `本网站是一个独立的非盈利科普项目，为自然爱好者、亲子家庭与慢旅行者而建。`, linksTitle: `友情链接`, links: LINKS_BY_LOCALE.zh },
+    footer: { callToAction: `Rincón del Este 是梅洛最受人珍爱的动植物庇护地之一，是原生丛林与山间溪流之间脆弱的平衡。请带着呵护之心探访，让下一代也能见到它生机勃勃的模样。`, text: `© 2026 Rincón del Este 指南 · 保留所有权利。\n本网站是一个独立的第三方非盈利科普指南项目，致力于准确传播 Rincón del Este 动植物保护区的信息。我们与阿根廷政府或任何官方机构均无隶属关系。`, made: `本网站是一个独立的非盈利科普项目，为自然爱好者、亲子家庭与慢旅行者而建。`, linksTitle: `友情链接`, links: LINKS_BY_LOCALE.zh },
     siteMap: {
       title: `保护区地图`,
       intro: `将鼠标悬停（或点按）下方地图中的标记，即可探索 Rincón del Este 的核心区域。`,
@@ -788,6 +1027,24 @@ A differenza di un parco pubblico tradizionale, Rincón del Este è una riserva 
 Merlo, porta delle sierras
 La località di Merlo — fondata nel 1797 — è il punto di partenza naturale per conoscere la riserva. Da lì, un breve tragitto conduce a El Rincón, dove la riserva apre i suoi sentieri al pubblico. Ecco perché la storia di Rincón del Este non si capisce senza quella di Merlo e dei popoli originari che abitavano queste montagne molto prima del villaggio.`
     },
+    heritage: {
+      title: `Eredità comechingón: vita quotidiana sulla roccia`,
+      intro: `Molto prima della fondazione di Merlo (1797), queste sierras erano già una casa. Qui il paesaggio non si percorre soltanto: si legge anche nella roccia, nei mortai e nelle tracce discrete dell'abitare.`,
+      cards: [
+        {
+          title: `Casas pozo (case semisotterranee)`,
+          content: `Per affrontare notti fredde e venti di sierra, molte abitazioni venivano realizzate in parte nel terreno, usando la terra come isolante naturale.
+\nUn'architettura discreta, pensata per le forti escursioni termiche tra giorno e notte.`,
+          items: [`Scavo di circa 1 m`, `Copertura con rami, legno e fango`, `La terra funziona da isolamento`],
+        },
+        {
+          title: `Conanas: cavità di macinazione nella roccia`,
+          content: `Su affioramenti di granito possono comparire cavità circolari scavate a mano: le **conanas**. Erano parte di una “cucina” all'aperto e di una tecnologia di sussistenza.`,
+          items: [`Macinazione delle baccelli di algarrobo per farina (patay)`, `Bevande fermentate (aloja)`, `Osserva senza toccare: gli oli della pelle accelerano l'erosione`],
+        },
+      ],
+      tip: `Se trovi conanas o arte rupestre, registra solo con occhi e fotocamera. Evita di toccare o calpestare: anche interventi minimi accelerano il degrado.`,
+    },
     myths: {
       title: `Storia, Popoli e Leggende`,
       intro: `Le Sierras de los Comechingones custodiscono uno dei segni culturali più antichi della regione. Prima della colonizzazione, questi monti furono territorio dei **comechingones**, cacciatori-raccoglitori che lasciarono il segno sulla pietra e nella memoria del luogo.`,
@@ -836,7 +1093,26 @@ La regione fa parte del sistema montuoso dove nidifica il **condor andino**. A p
         `Rispetta la flora: non tagliare rami né rimuovere piante, semi o pietre`,
         `Niente fuoco né fumo: fare fuoco nel monte è vietato; un solo errore basta per un incendio`,
         `Sostieni il locale: preferisci guide e fornitori di Merlo, e condividi la cura del luogo`
-      ]
+      ],
+      ecoregion: {
+        eyebrow: `Ecoregione`,
+        title: `Chaco Serrano (Ecorregión Chaco Serrano)`,
+        intro: `Il monte intorno a Rincón del Este non è “un bosco qualsiasi”: appartiene al **Chaco Serrano**, un'ecoregione di transizione tra pianura e sierra. La sua biodiversità dipende da un equilibrio delicato tra aridità, suoli superficiali e corsi d'acqua stagionali.`,
+        floraTitle: `Piante xerofite`,
+        flora: [
+          { name: `Algarrobo`, latin: `Prosopis alba`, note: `Specie strutturale; i baccelli nutrono la fauna e le radici contribuiscono a stabilizzare suolo e sorgenti.` },
+          { name: `Chañar`, latin: `Geoffroea decorticans`, note: `Adattata alla siccità con strategie che riducono la perdita d'acqua.` },
+          { name: `Molle`, latin: `Lithraea molleoides`, note: `Foglie resistenti e oli che limitano l'evaporazione; tipico del monte serrano.` },
+          { name: `Jarilla`, latin: `Larrea spp.`, note: `Simbolo dei paesaggi aridi, con foglie piccole e cerose che tollerano forte radiazione.` },
+        ],
+        faunaTitle: `Fauna chiave`,
+        fauna: [
+          { name: `Condor andino`, latin: `Vultur gryphus`, note: `Il profilo della sierra è il suo regno d'aria; osservare senza disturbare è parte del rispetto.` },
+          { name: `Ñandú / choique`, latin: `Rhea americana`, note: `Presente nei racconti locali; ricorda il valore di radure e praterie nel mosaico del monte.` },
+          { name: `Vizcacha`, latin: `Lagostomus maximus`, note: `Tane tra le rocce; più attiva all'alba e al tramonto.` },
+        ],
+        closing: `In questa ecoregione, suolo e acqua si degradano rapidamente se il passaggio esce dai sentieri. Ogni visita attenta è una forma concreta di conservazione.`,
+      },
     },
     architecture: {
       title: `Paesaggio ed Ecologia`,
@@ -875,14 +1151,48 @@ Proteggere le sorgenti significa dunque proteggere tutta la fauna. Per questo la
       ]
     },
     contrast: {
-      title: `Bosco Nativo e Cielo Aperto`,
-      intro: `La bellezza di Rincón del Este sta nel contrasto tra ciò che cresce e ciò che si vede. Sotto la chioma del monte, la vita si nasconde; sopra, la sierra apre un cielo immenso. Due volti di un solo rifugio.`,
+      title: `Bosco Nativo e Ruscelli di Montagna`,
+      intro: `La bellezza di Rincón del Este sta nel contrasto tra ciò che cresce e ciò che scorre. Sotto la chioma del monte, la vita si nasconde; tra le rocce, l'acqua raccoglie ombra, freschezza e movimento. Due volti di un solo rifugio.`,
       before: `Bosco Nativo`,
-      after: `Cielo della Sierra`
+      after: `Ruscelli di Montagna`
     },
     visiting: {
       title: `Pianifica la Tua Visita`,
       intro: `La riserva si visita tutto l'anno, anche se la primavera e l'autunno sono le stagioni più comode. Una mattina o un pomeriggio bastano per percorrere i sentieri principali. Quello che segue aiuta a pianificare.`,
+      accessibility: {
+        title: `Accessibilità`,
+        items: [
+          `Fondo naturale: molti tratti sono sterrati, con pietre mobili e dislivelli`,
+          `Passeggini e sedie a rotelle: alcuni settori possono non essere adatti; chiedi in reception alternative più semplici`,
+          `Ritmo consigliato: cammina piano e sfrutta le soste in ombra`,
+        ],
+        note: `Se viaggi con mobilità ridotta, chiedi all'ingresso il percorso più accessibile e le aree di riposo disponibili.`,
+      },
+      safety: {
+        title: `Sicurezza e contatti`,
+        items: [
+          `Sole e caldo: radiazione alta e aria secca; idratazione e protezione sono essenziali`,
+          `Rocce e acqua: dopo la pioggia, ruscelli e pietre diventano scivolosi`,
+          `Segnale: la connettività può essere instabile in sierra`,
+          `Contatto sul posto: +542664361087 (orari e indicazioni del giorno)`,
+        ],
+        note: `In caso di emergenza, avvisa il personale e segui la segnaletica e le istruzioni del giorno.`,
+      },
+      lnt: {
+        eyebrow: `Leave No Trace`,
+        title: `Visitare senza lasciare tracce`,
+        intro: `I principi di **Leave No Trace (LNT)** sono un'etica semplice: esplorare senza aumentare l'impatto. In un monte fragile, la conservazione inizia dai passi.`,
+        principles: [
+          { title: `Pianifica e preparati`, text: `Acqua, protezione solare, calzature adatte e orari: meno improvvisazione, meno impatto.` },
+          { title: `Resta su superfici resistenti`, text: `Segui i sentieri segnalati. Fuori traccia, suolo e vegetazione si degradano rapidamente.` },
+          { title: `Gestisci i rifiuti`, text: `Porta via tutto, inclusi organici e mozziconi.` },
+          { title: `Lascia ciò che trovi`, text: `Non raccogliere pietre, piante o frammenti storici. Le foto bastano.` },
+          { title: `Evita il fuoco`, text: `Il monte secco brucia facilmente. Rispetta i divieti.` },
+          { title: `Rispetta la fauna`, text: `Non nutrire gli animali e mantieni distanza, soprattutto in riproduzione.` },
+          { title: `Rispetta gli altri`, text: `Mantieni basso il rumore: la quiete è parte dell'habitat e dell'esperienza.` },
+        ],
+        note: `LNT integra le regole locali: in caso di dubbio, segnaletica e indicazioni del personale hanno priorità.`,
+      },
       hours: { title: `Orario`, content: `La riserva apre di giorno, generalmente **dalle 10:00 alle 20:00**.\nI primi momenti del mattino e il tramonto sono i migliori per vedere la fauna e per la fotografia.`, note: `L'orario può variare per stagione o eventi; chiama (+542664361087) prima della visita per confermare.` },
       price: { title: `Ingresso`, content: `L'ingresso prevede di solito un contributo simbolico di conservazione e manutenzione, pagato all'ingresso.\nGli importi sono indicati in loco; porta contanti nel caso le reti falliscano in sierra.`, note: `Chiedi se ci sono tariffe differenziate per studenti, pensionati o residenti di Merlo.` },
       duration: { title: `Durata Consigliata`, content: `Sentieri principali + mirador: circa **2–4 ore**.\nAggiungendo picnic e osservazione lenta, puoi passare una mattina o un pomeriggio intero.`, note: `Combina con Villa de Merlo e la Valle de Conlara per una fuga regionale di 1–2 giorni.` },
@@ -954,7 +1264,7 @@ Proteggere le sorgenti significa dunque proteggere tutta la fauna. Per questo la
       { question: `Cosa devo portare per visitare Rincón del Este?`, answer: `Porta cappello, occhiali e crema solare (la radiazione a Merlo è molto alta), almeno 1 L d'acqua a persona, calzature chiuse, repellente in primavera/estate e, se ami gli uccelli, il binocolo. Arriva presto per vedere più fauna.` }
     ]},
     location: { title: `Posizione sulla Mappa`, address: `Rincón del Este, El Rincón\nMerlo, Provincia di San Luis\nArgentina`, openMaps: `Vedi su Google Maps` },
-    footer: { callToAction: `Rincón del Este è uno dei rifugi di flora e fauna più amati di Merlo, un equilibrio fragile tra il monte nativo e il cielo della sierra. Visitelo con cura perché le prossime generazioni lo trovino ancora vivo.`, text: `© 2026 Rincón del Este Guide · Tutti i diritti riservati.\nQuesto sito è una guida educativa indipendente senza scopo di lucro dedicata a diffondere informazioni accurate sulla Riserva Florofaunistica di Rincón del Este. Non siamo affiliati con il governo argentino né con alcuna autorità ufficiale.`, made: `Questo è un progetto educativo indipendente non profit, creato per amanti della natura, famiglie e viaggiatori slow.`, linksTitle: `Link`, links: LINKS_BY_LOCALE.it },
+    footer: { callToAction: `Rincón del Este è uno dei rifugi di flora e fauna più amati di Merlo, un equilibrio fragile tra il monte nativo e i ruscelli di montagna. Visitelo con cura perché le prossime generazioni lo trovino ancora vivo.`, text: `© 2026 Rincón del Este Guide · Tutti i diritti riservati.\nQuesto sito è una guida educativa indipendente senza scopo di lucro dedicata a diffondere informazioni accurate sulla Riserva Florofaunistica di Rincón del Este. Non siamo affiliati con il governo argentino né con alcuna autorità ufficiale.`, made: `Questo è un progetto educativo indipendente non profit, creato per amanti della natura, famiglie e viaggiatori slow.`, linksTitle: `Link`, links: LINKS_BY_LOCALE.it },
     siteMap: {
       title: `Mappa della Riserva`,
       intro: `Passa il cursore (o tocca) i marcatori sulla mappa per esplorare le aree chiave di Rincón del Este.`,

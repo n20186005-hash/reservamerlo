@@ -588,6 +588,32 @@ const extra = PAGE_ENHANCEMENTS[locale];
       <p class="about-text" style="white-space:pre-line;margin-bottom:3rem;" set:html={renderText(t.history.intro)}></p>
     </div>
     <div class="reveal">
+      <div class="history-timeline-panel" style="margin-bottom:3rem;">
+        <h3 class="history-timeline-title">{t.heritage.title}</h3>
+        <p class="history-timeline-intro" set:html={renderText(t.heritage.intro)}></p>
+        <div style="display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));">
+          {
+            t.heritage.cards.map((card) => (
+              <div style="padding:1.25rem;border-radius:10px;background:rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.05);">
+                <h4 style="margin:0 0 0.6rem;font-family:var(--font-display);font-size:1.05rem;color:var(--color-deep);">{card.title}</h4>
+                <p style="margin:0;color:var(--color-earth-soft);line-height:1.7;white-space:pre-line;" set:html={renderText(card.content)}></p>
+                {
+                  card.items && (
+                    <ul style="margin:0.9rem 0 0;padding-left:1.1rem;color:var(--color-earth-soft);line-height:1.7;">
+                      {card.items.map((item: string) => (
+                        <li set:html={renderText(item)}></li>
+                      ))}
+                    </ul>
+                  )
+                }
+              </div>
+            ))
+          }
+        </div>
+        <div class="compare-note" style="margin-top:1.5rem;" set:html={renderText(t.heritage.tip)}></div>
+      </div>
+    </div>
+    <div class="reveal">
       <h3 style="font-family:var(--font-display);font-size:1.25rem;font-weight:650;color:var(--color-deep);margin:0 0 0.75rem;">{t.myths.title}</h3>
       <p style="color:var(--color-earth-soft);line-height:1.7;margin:0 0 1.25rem;" set:html={renderText(t.myths.intro)}></p>
       <div class="faq-list">
@@ -734,6 +760,40 @@ const extra = PAGE_ENHANCEMENTS[locale];
       </div>
     </div>
     <div class="reveal">
+      <div class="mission-panel" style="margin-top:1.5rem;">
+        <p class="mission-eyebrow">{t.eco.ecoregion.eyebrow}</p>
+        <h3 class="mission-title">{t.eco.ecoregion.title}</h3>
+        <p class="mission-intro" set:html={renderText(t.eco.ecoregion.intro)}></p>
+        <div class="mission-points" style="margin-bottom:0;">
+          <div class="mission-point">
+            <div style="font-weight:650;color:var(--color-deep);margin-bottom:0.6rem;">{t.eco.ecoregion.floraTitle}</div>
+            <ul style="margin:0;padding-left:1.1rem;line-height:1.7;">
+              {
+                t.eco.ecoregion.flora.map((s) => (
+                  <li>
+                    <strong>{s.name}</strong> <em>{s.latin}</em> — <span set:html={renderText(s.note)}></span>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+          <div class="mission-point">
+            <div style="font-weight:650;color:var(--color-deep);margin-bottom:0.6rem;">{t.eco.ecoregion.faunaTitle}</div>
+            <ul style="margin:0;padding-left:1.1rem;line-height:1.7;">
+              {
+                t.eco.ecoregion.fauna.map((s) => (
+                  <li>
+                    <strong>{s.name}</strong> <em>{s.latin}</em> — <span set:html={renderText(s.note)}></span>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+        <p style="margin:1.25rem 0 0;color:var(--color-earth-soft);line-height:1.75;" set:html={renderText(t.eco.ecoregion.closing)}></p>
+      </div>
+    </div>
+    <div class="reveal">
       <p class="about-text" style="white-space:pre-line;margin-bottom:2rem;" set:html={renderText(t.eco.intro)}></p>
     </div>
     <div class="reveal">
@@ -769,7 +829,7 @@ const extra = PAGE_ENHANCEMENTS[locale];
         </div>
         <div>
           <div style="border-radius:8px;overflow:hidden;border:1px solid rgba(0,0,0,0.1);margin-bottom:1rem;">
-            <img src="/gallery/reservamerlo-12.jpg" alt="Rincón del Este sierra sky" style="width:100%;height:auto;display:block;" />
+            <img src="/gallery/reservamerlo-12.jpg" alt="Rincón del Este mountain stream" style="width:100%;height:auto;display:block;" />
           </div>
           <p style="text-align:center;font-size:0.95rem;color:var(--color-earth-soft);font-weight:600;">{t.contrast.after}</p>
         </div>
@@ -787,6 +847,26 @@ const extra = PAGE_ENHANCEMENTS[locale];
       </div>
       <div class="reveal">
         <p class="about-text" style="white-space:pre-line;margin-bottom:3rem;" set:html={renderText(t.visiting.intro)}></p>
+      </div>
+      <div class="reveal">
+        <div style="display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-bottom:3rem;">
+          {
+            [
+              { title: t.visiting.accessibility.title, items: t.visiting.accessibility.items, note: t.visiting.accessibility.note },
+              { title: t.visiting.safety.title, items: t.visiting.safety.items, note: t.visiting.safety.note },
+            ].map((sec) => (
+              <div style="background:#fff;border-radius:12px;padding:2rem;border:1px solid rgba(0,0,0,0.08);box-shadow:0 8px 28px rgba(0,0,0,0.04);">
+                <h3 style="margin:0 0 1rem;font-family:var(--font-display);font-size:1.25rem;color:var(--color-deep);">{sec.title}</h3>
+                <ul style="margin:0 0 1.25rem;padding-left:1.2rem;color:var(--color-earth-soft);line-height:1.75;">
+                  {sec.items.map((item: string) => (
+                    <li set:html={renderText(item)}></li>
+                  ))}
+                </ul>
+                <div class="compare-note" set:html={renderText(sec.note)}></div>
+              </div>
+            ))
+          }
+        </div>
       </div>
       <div class="reveal">
         <div class="info-grid">
@@ -818,6 +898,24 @@ const extra = PAGE_ENHANCEMENTS[locale];
               </div>
             ))
           }
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="mission-panel" style="margin-top:3rem;">
+          <p class="mission-eyebrow">{t.visiting.lnt.eyebrow}</p>
+          <h3 class="mission-title">{t.visiting.lnt.title}</h3>
+          <p class="mission-intro" set:html={renderText(t.visiting.lnt.intro)}></p>
+          <div class="mission-points" style="margin-bottom:0;">
+            {
+              t.visiting.lnt.principles.map((p, i) => (
+                <div class="mission-point">
+                  <div style="font-weight:650;color:var(--color-deep);margin-bottom:0.35rem;">{i + 1}. {p.title}</div>
+                  <div style="color:var(--color-earth-soft);line-height:1.7;">{p.text}</div>
+                </div>
+              ))
+            }
+          </div>
+          <div class="compare-note" style="margin-top:1.5rem;" set:html={renderText(t.visiting.lnt.note)}></div>
         </div>
       </div>
       <div class="reveal">
