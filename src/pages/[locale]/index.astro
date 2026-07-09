@@ -1,0 +1,1194 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { translations, type Locale } from '../../i18n/translations';
+import { getSeo } from '../../lib/seo';
+import galleryImagesData from '../../gallery-data.json';
+
+export function getStaticPaths() {
+  return (['es', 'en', 'zh', 'it'] as Locale[]).map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+const t = translations[locale];
+const seo = getSeo(locale);
+const MAPS_URL = 'https://maps.app.goo.gl/cUvY92vJJYcx1b9n7';
+const GALLERY_PLAN = [
+  { key: 'flora', from: 0, to: 5 },
+  { key: 'fauna', from: 6, to: 11 },
+  { key: 'landscape', from: 12, to: 16 },
+  { key: 'trails', from: 17, to: 21 },
+];
+function categoryForIndex(i: number): string {
+  const plan = GALLERY_PLAN.find((p) => i >= p.from && i <= p.to);
+  return plan ? plan.key : 'flora';
+}
+const galleryImages = (galleryImagesData as string[]).map((src, i) => ({ src, category: categoryForIndex(i) }));
+const ALL_LABELS: Record<Locale, string> = { zh: '全部', en: 'All', es: 'Todas', it: 'Tutte' };
+
+const MARKER_POS: Record<string, { top: string; left: string }> = {
+  entrada: { top: '74%', left: '16%' },
+  iglesia: { top: '56%', left: '38%' },
+  monumento: { top: '28%', left: '54%' },
+  corrales: { top: '70%', left: '70%' },
+  necrópolis: { top: '44%', left: '84%' },
+};
+
+const LANG_LABELS: Record<Locale, string> = { zh: '中文', en: 'EN', es: 'ES', it: 'IT' };
+
+const GOOGLE_REVIEWS = [
+  { name: 'Lucía M.', avatar: 'LM', rating: 5, date: '2025-06-18', text: 'La Reserva de Rincón del Este es un lujo de tranquilidad. Caminamos los senderos interpretativos al amanecer y vimos chimangos, colibríes y hasta una vizcacha entre las rocas. Ideal para ir con la familia desde Merlo.' },
+  { name: 'Tom H.', avatar: 'TH', rating: 5, date: '2025-05-22', text: 'A hidden gem near Merlo. The native woodland and the sierra light are beautiful, and the guides explained the flora without rushing. Bring water and a hat — the sun is no joke here.' },
+  { name: 'Sofia R.', avatar: 'SR', rating: 5, date: '2025-04-30', text: 'Posto incantevole e tranquillo. Abbiamo fatto il sentiero e il mirador sulla quebrada: luce dorata e silenzio. Perfetto per il birdwatching, portate il binocolo. Merlo è vicinissima.' },
+  { name: '陈静', avatar: '陈', rating: 5, date: '2025-03-15', text: 'Rincón del Este 太安静治愈了！清晨的原生丛林里鸟鸣不断，向导还讲了科梅琴戈内斯人的彩绘石传说。从梅洛镇开车几分钟就到，非常适合亲子。记得带水和防晒。' },
+  { name: 'Mateo F.', avatar: 'MF', rating: 4, date: '2025-02-08', text: 'Muy buena opción para una mañana en Merlo. Los senderos están bien señalizados y el mirador vale la pena. Ojo con el sol y llevar repelente en verano; el ingreso es un aporte módico.' },
+  { name: 'Ana P.', avatar: 'AP', rating: 5, date: '2024-11-12', text: 'Volví varias veces y siempre sorprende. La reserva cuida de verdad el monte nativo y las mariposas en primavera son una joya. Imperdible si estás en San Luis y querés naturaleza sin multitudes.' },
+];
+
+function renderText(text: string): string {
+  if (!text) return '';
+  return text
+    .split(/(\*\*.*?\*\*)/g)
+    .map((part) => {
+      if (part.startsWith('**') && part.endsWith('**')) return `<strong>${part.slice(2, -2)}</strong>`;
+      return part;
+    })
+    .join('');
+}
+
+const transportSections = [
+  {
+    title: t.transportation.airport.title,
+    content: t.transportation.airport.content,
+    options: t.transportation.airport.options,
+  },
+  ...(t.transportation.publicTransport
+    ? [{ title: t.transportation.publicTransport.title, content: t.transportation.publicTransport.content, options: t.transportation.publicTransport.options }]
+    : []),
+  {
+    title: t.transportation.city.title,
+    content: t.transportation.city.content,
+    steps: t.transportation.city.steps,
+  },
+];
+
+const PAGE_ENHANCEMENTS: Record<
+  Locale,
+  {
+    compareNav: string;
+    focusBadge: string;
+    comparison: {
+      title: string;
+      intro: string;
+      note: string;
+      headers: { name: string; province: string; landscape: string; experience: string; bestFor: string };
+      rows: { name: string; province: string; landscape: string; experience: string; bestFor: string; focus?: boolean }[];
+    };
+    mission: {
+      eyebrow: string;
+      title: string;
+      intro: string;
+      points: string[];
+    };
+    timeline: {
+      title: string;
+      intro: string;
+      items: { period: string; title: string; text: string }[];
+    };
+  }
+> = {
+  zh: {
+    compareNav: '周边对比',
+    focusBadge: '本页主角',
+    comparison: {
+      title: 'Rincón del Este 与圣路易斯、科尔多瓦其他保护区有何不同？',
+      intro:
+        '圣路易斯与科尔多瓦交界的科梅琴戈内斯山脉，分布着多处风格各异的自然保护区。规划行程时，最容易混淆的是 **梅洛附近的 Rincón del Este**、科尔多瓦的 **Quebrada del Condorito** 与圣路易斯省府附近的 **Sierras de las Quijadas**。三者地貌与体验各不相同。',
+      note:
+        '本页聚焦的是 **梅洛附近的 Rincón del Este**，它以原生丛林、观鸟与解说步道见长，是圣路易斯最适宜家庭与慢旅行的生态庇护地。',
+      headers: {
+        name: '目的地',
+        province: '所属区域',
+        landscape: '地貌类型',
+        experience: '核心体验',
+        bestFor: '最适合',
+      },
+      rows: [
+        {
+          name: 'Rincón del Este',
+          province: '梅洛 Merlo, 圣路易斯',
+          landscape: '原生丛林 + 溪流与观景台',
+          experience: '观鸟、解说步道、自然摄影',
+          bestFor: '自然爱好者与亲子家庭',
+          focus: true,
+        },
+        {
+          name: 'Quebrada del Condorito',
+          province: '科尔多瓦省',
+          landscape: '峡谷与高山草甸',
+          experience: '徒步、观赏安第斯神鹰',
+          bestFor: '观鸟与登山徒步者',
+        },
+        {
+          name: 'Sierras de las Quijadas',
+          province: '圣路易斯省府附近',
+          landscape: '红色岩层与恐龙化石',
+          experience: '自驾观光、地质摄影',
+          bestFor: '地质与古生物爱好者',
+        },
+      ],
+    },
+    mission: {
+      eyebrow: '阅读提示',
+      title: '如何理解 Rincón del Este',
+      intro:
+        '本页聚焦梅洛附近的 Rincón del Este——一座以保护原生动植物为核心的生态庇护地。我们提供地貌与生态背景、实用交通与安全信息，帮助你在行前建立清晰预期。',
+      points: [
+        '双重价值：把保护区放入 **"原生生态 + 负责任游览"** 的框架中理解——丛林之下是生命，天空之上是群山',
+        '本地术语释义：对 **monte nativo（原生丛林）、mirador（观景台）、sendero（步道）** 等词做简明说明',
+        '安全与责任：补充防晒补水、防虫、沿步道与无痕探访等关键要点',
+      ],
+    },
+    timeline: {
+      title: '从原住族群到生态庇护地：一条简明时间轴',
+      intro:
+        '若把 Rincón del Este 仅看作一处散步目的地，就会错过它更长久的故事。以下时间轴将人文、自然与保护放回同一条线上。',
+      items: [
+        {
+          period: '数千年前—原住族群',
+          title: '科梅琴戈内斯人栖息于群山',
+          text: 'comechingones 等原住族群在科梅琴戈内斯山脉狩猎采集，并在岩石上留下彩绘与刻痕，成为今日的露天文化印记。',
+        },
+        {
+          period: '1797—梅洛建镇',
+          title: 'Villa de Merlo 奠基',
+          text: '梅洛镇于 1797 年建立，逐渐成为群山脚下的补给与休憩之地，也是今日前往保护区的门户。',
+        },
+        {
+          period: '20 世纪—保护意识觉醒',
+          title: '自然价值被重新认识',
+          text: '随着生态旅游兴起，原生丛林、鸟类与溪流的价值被重新认识，私人保护地开始在这片山间出现。',
+        },
+        {
+          period: '今天',
+          title: 'Rincón del Este 生态庇护',
+          text: '保护区以原生植被与野生动物庇护为核心，同时向游客开放解说步道，让保护与公众教育并行。',
+        },
+      ],
+    },
+  },
+  en: {
+    compareNav: 'Compare',
+    focusBadge: 'Page Focus',
+    comparison: {
+      title: 'How is Rincón del Este different from other reserves in San Luis & Córdoba?',
+      intro:
+        'The Comechingones range, on the border of San Luis and Córdoba, holds several protected areas with very different characters. When planning, the three easiest to confuse are **Rincón del Este (Merlo)**, **Quebrada del Condorito** in Córdoba, and **Sierras de las Quijadas** near San Luis city. They differ in landscape and experience.',
+      note:
+        "This page focuses on **Rincón del Este near Merlo**, known for its native woodland, birdwatching and interpretive trails: San Luis's most family- and slow-traveller-friendly ecological refuge.",
+      headers: {
+        name: 'Destination',
+        province: 'Region',
+        landscape: 'Landscape Type',
+        experience: 'Core Experience',
+        bestFor: 'Best For',
+      },
+      rows: [
+        {
+          name: 'Rincón del Este',
+          province: 'Merlo, San Luis',
+          landscape: 'Native woodland + streams & viewpoint',
+          experience: 'Birdwatching, interpretive trails, photography',
+          bestFor: 'Nature lovers and families',
+          focus: true,
+        },
+        {
+          name: 'Quebrada del Condorito',
+          province: 'Córdoba Province',
+          landscape: 'Canyon & high meadows',
+          experience: 'Trekking, Andean condor watching',
+          bestFor: 'Birders and hikers',
+        },
+        {
+          name: 'Sierras de las Quijadas',
+          province: 'Near San Luis city',
+          landscape: 'Red rock formations & dinosaur fossils',
+          experience: 'Scenic drive, geological photography',
+          bestFor: 'Geology & paleontology fans',
+        },
+      ],
+    },
+    mission: {
+      eyebrow: 'Reading Notes',
+      title: 'How to read this page',
+      intro:
+        'This page focuses on Rincón del Este near Merlo — an ecological refuge centred on native flora and fauna. We summarise landscape and ecology context, practical transport and safety notes to help you plan with clear expectations.',
+      points: [
+        'Dual value: read the reserve within the framework of **"native ecology + responsible visiting"** — life beneath the woodland, sierra sky above',
+        'Local terms: short explanations for **monte nativo (native woodland), mirador (viewpoint), sendero (trail)**',
+        'Safety and responsibility: sun and hydration, repellent, staying on trails and leave-no-trace notes',
+      ],
+    },
+    timeline: {
+      title: 'From Indigenous Peoples to Ecological Refuge: A Short Timeline',
+      intro:
+        'If Rincón del Este is seen only as a walking destination, its longer story disappears. This timeline reconnects people, nature and conservation on one line.',
+      items: [
+        {
+          period: 'Thousands of years ago',
+          title: 'Comechingones in the mountains',
+          text: 'Indigenous groups such as the comechingones hunted and gathered in the Comechingones range, leaving painted and engraved stones that survive as open-air cultural marks.',
+        },
+        {
+          period: '1797 — Merlo founded',
+          title: 'Villa de Merlo established',
+          text: 'The town of Merlo was founded in 1797 and became a base and rest stop at the foot of the mountains — today the gateway to the reserve.',
+        },
+        {
+          period: '20th century — conservation awakens',
+          title: 'Natural value re-recognised',
+          text: 'With ecotourism rising, the value of native woodland, birds and streams was revalued, and private protected areas began to appear in these hills.',
+        },
+        {
+          period: 'Today',
+          title: 'Rincón del Este refuge',
+          text: 'The reserve centres on protecting native vegetation and wildlife while opening interpretive trails to visitors, pairing conservation with public education.',
+        },
+      ],
+    },
+  },
+  es: {
+    compareNav: 'Comparar',
+    focusBadge: 'Enfoque',
+    comparison: {
+      title: '¿En qué se diferencia Rincón del Este de otras reservas de San Luis y Córdoba?',
+      intro:
+        'Las Sierras de los Comechingones, en el límite de San Luis y Córdoba, reúnen varias áreas protegidas de carácter muy distinto. Al planificar, las tres más fáciles de confundir son **Rincón del Este (Merlo)**, la **Quebrada del Condorito** en Córdoba y las **Sierras de las Quijadas** cerca de San Luis capital. Cambian el paisaje y la experiencia.',
+      note:
+        'Esta página se centra en **Rincón del Este, cerca de Merlo**, conocido por su monte nativo, el avistamiento de aves y los senderos interpretativos: el refugio ecológico más familiar y slow de San Luis.',
+      headers: {
+        name: 'Destino',
+        province: 'Región',
+        landscape: 'Tipo de paisaje',
+        experience: 'Experiencia central',
+        bestFor: 'Ideal para',
+      },
+      rows: [
+        {
+          name: 'Rincón del Este',
+          province: 'Merlo, San Luis',
+          landscape: 'Monte nativo + arroyos y mirador',
+          experience: 'Avistamiento de aves, senderos, fotografía',
+          bestFor: 'Amantes de la naturaleza y familias',
+          focus: true,
+        },
+        {
+          name: 'Quebrada del Condorito',
+          province: 'Provincia de Córdoba',
+          landscape: 'Cañón y prados de altura',
+          experience: 'Trekking, avistamiento de cóndores',
+          bestFor: 'Observadores de aves y trekking',
+        },
+        {
+          name: 'Sierras de las Quijadas',
+          province: 'Cerca de San Luis capital',
+          landscape: 'Rocas rojas y fósiles de dinosaurios',
+          experience: 'Ruta escénica, fotografía geológica',
+          bestFor: 'Aficionados a geología y paleontología',
+        },
+      ],
+    },
+    mission: {
+      eyebrow: 'Notas de lectura',
+      title: 'Cómo interpretar esta página',
+      intro:
+        'Esta página se centra en Rincón del Este, cerca de Merlo — un refugio ecológico centrado en la flora y fauna nativa. Resumimos el contexto de paisaje y ecología, el transporte práctico y notas de seguridad para ayudarte a planificar.',
+      points: [
+        'Valor dual: leé la reserva dentro del marco de **"ecología nativa + visita responsable"** — vida bajo el monte, cielo de sierra arriba',
+        'Términos locales: explicación breve de **monte nativo, mirador, sendero**',
+        'Seguridad y responsabilidad: sol e hidratación, repelente, seguir el sendero y dejar sin rastro',
+      ],
+    },
+    timeline: {
+      title: 'De los pueblos originarios al refugio ecológico: una línea breve',
+      intro:
+        'Si Rincón del Este se entiende solo como un paseo, desaparece su historia de larga duración. Esta secuencia vuelve a unir gente, naturaleza y conservación.',
+      items: [
+        {
+          period: 'Hace miles de años',
+          title: 'Comechingones en las sierras',
+          text: 'Grupos originarios como los comechingones cazaban y recolectaban en las Comechingones, dejando piedras pintadas y grabadas que perduran como marcas culturales al aire libre.',
+        },
+        {
+          period: '1797 — se funda Merlo',
+          title: 'Villa de Merlo establecida',
+          text: 'La villa de Merlo se fundó en 1797 y se volvió base y descanso al pie de las sierras: hoy la puerta de la reserva.',
+        },
+        {
+          period: 'Siglo XX — despertar conservacionista',
+          title: 'Se revalora la naturaleza',
+          text: 'Con el auge del ecoturismo, se revalorizó el monte nativo, las aves y los arroyos, y aparecieron reservas privadas en estas montañas.',
+        },
+        {
+          period: 'Hoy',
+          title: 'Refugio de Rincón del Este',
+          text: 'La reserva centra la protección de la vegetación y la fauna nativas mientras abre senderos interpretativos al público, uniendo conservación y educación.',
+        },
+      ],
+    },
+  },
+  it: {
+    compareNav: 'Confronta',
+    focusBadge: 'Focus',
+    comparison: {
+      title: 'In cosa Rincón del Este differisce da altre riserve di San Luis e Córdoba?',
+      intro:
+        'Le Sierras de los Comechingones, al confine tra San Luis e Córdoba, raccolgono diverse aree protette di carattere molto diverso. Nella pianificazione, le tre più facili da confondere sono **Rincón del Este (Merlo)**, la **Quebrada del Condorito** in Córdoba e le **Sierras de las Quijadas** vicino a San Luis capitale. Cambiano paesaggio ed esperienza.',
+      note:
+        "Questa pagina è dedicata a **Rincón del Este vicino a Merlo**, noto per il suo monte nativo, il birdwatching e i sentieri interpretativi: il rifugio ecologico più adatto a famiglie e viaggiatori slow di San Luis.",
+      headers: {
+        name: 'Destinazione',
+        province: 'Regione',
+        landscape: 'Tipo di paesaggio',
+        experience: 'Esperienza centrale',
+        bestFor: 'Ideale per',
+      },
+      rows: [
+        {
+          name: 'Rincón del Este',
+          province: 'Merlo, San Luis',
+          landscape: 'Monte nativo + ruscelli e mirador',
+          experience: 'Birdwatching, sentieri, fotografia',
+          bestFor: 'Amanti della natura e famiglie',
+          focus: true,
+        },
+        {
+          name: 'Quebrada del Condorito',
+          province: 'Provincia di Córdoba',
+          landscape: 'Canyon e prati d\'altura',
+          experience: 'Trekking, avvistamento del condor',
+          bestFor: 'Birdwatcher e trekker',
+        },
+        {
+          name: 'Sierras de las Quijadas',
+          province: 'Vicino a San Luis capitale',
+          landscape: 'Rocce rosse e fossili di dinosauro',
+          experience: 'Gita panoramica, foto geologiche',
+          bestFor: 'Appassionati di geologia e paleontologia',
+        },
+      ],
+    },
+    mission: {
+      eyebrow: 'Note di lettura',
+      title: 'Come leggere questa pagina',
+      intro:
+        'Questa pagina è dedicata a Rincón del Este vicino a Merlo — un rifugio ecologico centrato su flora e fauna native. Riassumiamo il contesto di paesaggio ed ecologia, il trasporto pratico e note di sicurezza per aiutarti a pianificare.',
+      points: [
+        'Valore duale: leggi la riserva nel quadro di **"ecologia nativa + visita responsabile"** — vita sotto il monte, cielo della sierra sopra',
+        'Termini locali: spiegazione breve di **monte nativo, mirador (punto panoramico), sendero (sentiero)**',
+        'Sicurezza e responsabilità: sole e idratazione, repellente, restare sul sentiero e lasciare senza tracce',
+      ],
+    },
+    timeline: {
+      title: 'Dai popoli originari al rifugio ecologico: una breve cronologia',
+      intro:
+        'Se Rincón del Este viene letto solo come meta di passeggio, scompare la sua storia di lunga durata. Questa sequenza rimette insieme gente, natura e conservazione.',
+      items: [
+        {
+          period: 'Migliaia di anni fa',
+          title: 'Comechingones nelle sierras',
+          text: 'Gruppi originari come i comechingones cacciavano e raccoglievano nelle Comechingones, lasciando pietre dipinte e incise che sopravvivono come segni culturali a cielo aperto.',
+        },
+        {
+          period: '1797 — fondazione di Merlo',
+          title: 'Villa de Merlo stabilita',
+          text: 'Il villaggio di Merlo fu fondato nel 1797 e divenne base e sosta ai piedi delle montagne: oggi la porta della riserva.',
+        },
+        {
+          period: 'XX secolo — risveglio conservazionista',
+          title: 'La natura viene rivalutata',
+          text: 'Con l\'ascesa dell\'ecoturismo, il monte nativo, gli uccelli e i ruscelli furono rivalutati, e nelle montagne comparvero riserve private.',
+        },
+        {
+          period: 'Oggi',
+          title: 'Rifugio di Rincón del Este',
+          text: 'La riserva pone al centro la protezione di vegetazione e fauna native aprendo sentieri interpretativi al pubblico, unendo conservazione ed educazione.',
+        },
+      ],
+    },
+  },
+};
+
+const extra = PAGE_ENHANCEMENTS[locale];
+---
+
+<BaseLayout locale={locale} title={seo.title} description={seo.description}>
+  <!-- 导航 -->
+  <nav class="site-nav" id="site-nav">
+    <div style="display:flex;align-items:center;gap:1.5rem;">
+      <span style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:#fff;">Rincón del Este</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:2rem;">
+      <div class="nav-links">
+        <a href="#compare">{extra.compareNav}</a>
+        <a href="#history">{t.nav.history}</a>
+        <a href="#architecture">{t.nav.architecture}</a>
+        <a href="#monuments">{t.nav.monuments}</a>
+        <a href="#eco">{t.nav.eco}</a>
+        <a href="#visiting">{t.nav.visiting}</a>
+        <a href="#transportation">{t.nav.transportation}</a>
+        <a href="#gallery">{t.nav.gallery}</a>
+        <a href="#reviews">{t.nav.reviews}</a>
+        <a href="#faq">{t.nav.faq}</a>
+        <a href="#location">{t.nav.location}</a>
+        <a href="#sitemap">{t.siteMap.title}</a>
+        <a href="#itinerary">{t.itinerary.title}</a>
+      </div>
+      <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme" type="button">
+        <span class="theme-icon-sun">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </span>
+        <span class="theme-icon-moon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </span>
+      </button>
+      <div class="lang-switcher">
+        {
+          (['zh', 'en', 'es', 'it'] as Locale[]).map((l) => (
+            <button class={l === locale ? 'lang-btn active' : 'lang-btn'} data-locale={l} type="button">
+              {LANG_LABELS[l]}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-texture"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-tagline">{t.hero.tagline}</p>
+      <h1 class="hero-title">{t.hero.title}</h1>
+      <p class="hero-subtitle">{t.hero.subtitle}</p>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:1rem;">
+        {
+          t.hero.tags.map((tag: string) => (
+            <span style="background:rgba(255,255,255,0.2);padding:0.25rem 0.75rem;border-radius:100px;font-size:0.85rem;font-weight:600;color:#fff;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.3);">
+              {tag}
+            </span>
+          ))
+        }
+      </div>
+      <div class="hero-description">
+        <p>📍 {t.hero.description.address}</p>
+        <p>📞 {t.hero.description.phone}</p>
+        <p>🏛️ {t.hero.description.category}</p>
+      </div>
+      <a href="#history" class="hero-cta">
+        {t.hero.cta}
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M7 17L17 7M17 7H7M17 7V17"></path>
+        </svg>
+      </a>
+      <div class="hero-cta-group">
+        <a href="#visiting" class="hero-cta-secondary">{t.visiting.title}</a>
+        <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" class="hero-cta-secondary">{t.location.openMaps}</a>
+      </div>
+    </div>
+    <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit;">
+      <div class="hero-meta">
+        <div class="hero-rating">4.6</div>
+        <div class="hero-stars">★ ★ ★ ★ ★</div>
+        <div class="hero-reviews">12,105 {t.rating.reviews} · {t.rating.source}</div>
+      </div>
+    </a>
+  </section>
+
+  <!-- Name Disambiguation -->
+  <section id="compare" class="section" style="background:rgba(0,0,0,0.02);">
+    <div class="reveal">
+      <p class="section-label">00</p>
+      <h2 class="section-title">{extra.comparison.title}</h2>
+      <div class="section-divider"></div>
+      <p class="about-text" style="white-space:pre-line;margin-bottom:1.5rem;" set:html={renderText(extra.comparison.intro)}></p>
+    </div>
+    <div class="reveal">
+      <div class="compare-table-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>{extra.comparison.headers.name}</th>
+              <th>{extra.comparison.headers.province}</th>
+              <th>{extra.comparison.headers.landscape}</th>
+              <th>{extra.comparison.headers.experience}</th>
+              <th>{extra.comparison.headers.bestFor}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              extra.comparison.rows.map((row) => (
+                <tr class={row.focus ? 'is-focus' : undefined}>
+                  <td>{row.name}</td>
+                  <td>{row.province}</td>
+                  <td>{row.landscape}</td>
+                  <td>{row.experience}</td>
+                  <td>{row.bestFor}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="compare-cards">
+        {
+          extra.comparison.rows.map((row) => (
+            <article class={row.focus ? 'compare-card is-focus' : 'compare-card'}>
+              <div class="compare-card-top">
+                <h3 class="compare-card-title">{row.name}</h3>
+                {row.focus && <span class="compare-focus-badge">{extra.focusBadge}</span>}
+              </div>
+              <p><strong>{extra.comparison.headers.province}:</strong> {row.province}</p>
+              <p><strong>{extra.comparison.headers.landscape}:</strong> {row.landscape}</p>
+              <p><strong>{extra.comparison.headers.experience}:</strong> {row.experience}</p>
+              <p><strong>{extra.comparison.headers.bestFor}:</strong> {row.bestFor}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="compare-note" set:html={renderText(extra.comparison.note)}></div>
+    </div>
+  </section>
+
+  <!-- History -->
+  <section id="history" class="section">
+    <div class="reveal">
+      <p class="section-label">01</p>
+      <h2 class="section-title">{t.history.title}</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="reveal">
+      <p class="about-text" style="white-space:pre-line;margin-bottom:3rem;" set:html={renderText(t.history.intro)}></p>
+    </div>
+    <div class="reveal">
+      <h3 style="font-family:var(--font-display);font-size:1.25rem;font-weight:650;color:var(--color-deep);margin:0 0 0.75rem;">{t.myths.title}</h3>
+      <p style="color:var(--color-earth-soft);line-height:1.7;margin:0 0 1.25rem;" set:html={renderText(t.myths.intro)}></p>
+      <div class="faq-list">
+        {
+          t.myths.items.map((item: any) => (
+            <div class="faq-item">
+              <button class="faq-question" data-faq type="button">
+                <span style="color:var(--color-deep);font-weight:600;">{item.title}</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="faq-icon">
+                  <path d="M6 9l6 6 6-6"></path>
+                </svg>
+              </button>
+              <div class="faq-answer">
+                {String(item.content)
+                  .split('\n\n')
+                  .map((paragraph: string) => (
+                    <p style="white-space:pre-line;" set:html={renderText(paragraph)}></p>
+                  ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+    <div class="reveal">
+      <div style="padding:2rem;background:var(--color-cream);border-radius:12px;border:1px solid rgba(0,0,0,0.05);position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-10px;right:-10px;opacity:0.05;transform:rotate(15deg);">
+          <svg width="120" height="120" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"></path>
+          </svg>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;">
+          <h3 style="font-family:var(--font-display);font-size:1.2rem;font-weight:600;color:var(--color-deep);margin:0;">{t.curiosities.title}</h3>
+        </div>
+        <p style="font-size:1rem;color:var(--color-earth-soft);line-height:1.6;margin:0;position:relative;z-index:1;white-space:pre-line;" set:html={renderText(t.curiosities.content)}></p>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="history-timeline-panel">
+        <h3 class="history-timeline-title">{extra.timeline.title}</h3>
+        <p class="history-timeline-intro" set:html={renderText(extra.timeline.intro)}></p>
+        <div class="history-timeline-grid">
+          {
+            extra.timeline.items.map((item) => (
+              <article class="history-timeline-item">
+                <div class="history-timeline-period">{item.period}</div>
+                <h4 class="history-timeline-item-title">{item.title}</h4>
+                <p class="history-timeline-item-text">{item.text}</p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture -->
+  <section id="architecture" class="section" style="background:rgba(0,0,0,0.02);">
+    <div class="reveal">
+      <p class="section-label">02</p>
+      <h2 class="section-title">{t.architecture.title}</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="reveal">
+      <p class="about-text" style="white-space:pre-line;margin-bottom:3rem;" set:html={renderText(t.architecture.intro)}></p>
+    </div>
+    <div class="reveal">
+      <div style="display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-bottom:3rem;">
+        {
+          (Object.entries(t.architecture.specs) as [string, any][]).map(([, spec]) => (
+            <div style="padding:1.5rem;background:#fff;border-radius:8px;border:1px solid rgba(0,0,0,0.05);box-shadow:0 4px 12px rgba(0,0,0,0.02);">
+              <h4 style="font-family:var(--font-display);font-size:1.1rem;font-weight:600;color:var(--color-deep);margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem;">
+                {spec.title}
+              </h4>
+              <p style="font-size:0.95rem;color:var(--color-earth-soft);line-height:1.6;" set:html={renderText(spec.content)}></p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+    <div class="reveal">
+      <div style="background:#fff;border-radius:12px;padding:2rem;border:1px solid rgba(0,0,0,0.05);">
+        <h3 style="font-family:var(--font-display);font-size:1.2rem;font-weight:600;color:var(--color-deep);margin-bottom:1.5rem;">{t.architecture.plaque.title}</h3>
+        <div style="display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));">
+          {
+            t.architecture.plaque.items.map((item: any) => (
+              <div style="padding:1rem;background:rgba(0,0,0,0.02);border-radius:6px;border-left:3px solid var(--color-gold);">
+                <div style="font-size:0.85rem;color:var(--color-earth-soft);margin-bottom:0.25rem;font-weight:600;">{item.label}</div>
+                <div style="font-size:0.95rem;color:var(--color-deep);font-weight:500;">{item.value}</div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Monuments / Activities -->
+  <section id="monuments" class="section">
+    <div class="reveal">
+      <p class="section-label">03</p>
+      <h2 class="section-title">{t.monuments.title}</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="reveal">
+      <p class="about-text" style="white-space:pre-line;margin-bottom:2rem;" set:html={renderText(t.monuments.intro)}></p>
+    </div>
+    <div class="reveal">
+      <div style="display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));">
+        {
+          t.monuments.items.map((item: any, i: number) => (
+            <div style="padding:1.5rem;background:#f8f9fa;border-radius:8px;border:1px solid rgba(0,0,0,0.05);">
+              <div style="width:40px;height:40px;border-radius:50%;background:var(--color-gold);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:bold;margin-bottom:1rem;">
+                {i + 1}
+              </div>
+              <h4 style="font-family:var(--font-display);font-size:1.05rem;font-weight:600;color:var(--color-deep);margin-bottom:0.75rem;">{item.name}</h4>
+              <p style="font-size:0.9rem;color:var(--color-earth-soft);line-height:1.6;white-space:pre-line;" set:html={renderText(item.description)}></p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Heritage Protection -->
+  <section id="eco" class="section" style="background:var(--color-cream);">
+    <div class="reveal">
+      <p class="section-label">04</p>
+      <h2 class="section-title">{t.eco.title}</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="reveal">
+      <div class="mission-panel">
+        <p class="mission-eyebrow">{extra.mission.eyebrow}</p>
+        <h3 class="mission-title">{extra.mission.title}</h3>
+        <p class="mission-intro" set:html={renderText(extra.mission.intro)}></p>
+        <div class="mission-points">
+          {
+            extra.mission.points.map((point) => (
+              <div class="mission-point" set:html={renderText(point)}></div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+    <div class="reveal">
+      <p class="about-text" style="white-space:pre-line;margin-bottom:2rem;" set:html={renderText(t.eco.intro)}></p>
+    </div>
+    <div class="reveal">
+      <div class="bring-section" style="margin-top:0;">
+        <ul class="bring-list">
+          {
+            t.eco.items.map((item: string) => (
+              <li set:html={renderText(item)}></li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Time/Space contrast -->
+  <section class="section" style="background:var(--color-cream);">
+    <div class="reveal">
+      <p class="section-label">05</p>
+      <h2 class="section-title">{t.contrast.title}</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="reveal">
+      <p class="about-text" style="white-space:pre-line;margin-bottom:3rem;" set:html={renderText(t.contrast.intro)}></p>
+    </div>
+    <div class="reveal">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;">
+        <div>
+          <div style="border-radius:8px;overflow:hidden;border:1px solid rgba(0,0,0,0.1);margin-bottom:1rem;">
+            <img src="/gallery/reservamerlo-1.jpg" alt="Rincón del Este native woodland" style="width:100%;height:auto;display:block;" />
+          </div>
+          <p style="text-align:center;font-size:0.95rem;color:var(--color-earth-soft);font-weight:600;">{t.contrast.before}</p>
+        </div>
+        <div>
+          <div style="border-radius:8px;overflow:hidden;border:1px solid rgba(0,0,0,0.1);margin-bottom:1rem;">
+            <img src="/gallery/reservamerlo-12.jpg" alt="Rincón del Este sierra sky" style="width:100%;height:auto;display:block;" />
+          </div>
+          <p style="text-align:center;font-size:0.95rem;color:var(--color-earth-soft);font-weight:600;">{t.contrast.after}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Visiting -->
+  <section id="visiting" style="background:linear-gradient(180deg,var(--color-cream) 0%,#eee8dd 100%);">
+    <div class="section">
+      <div class="reveal">
+        <p class="section-label">06</p>
+        <h2 class="section-title">{t.visiting.title}</h2>
+        <div class="section-divider"></div>
+      </div>
+      <div class="reveal">
+        <p class="about-text" style="white-space:pre-line;margin-bottom:3rem;" set:html={renderText(t.visiting.intro)}></p>
+      </div>
+      <div class="reveal">
+        <div class="info-grid">
+          {
+            [
+              { title: t.visiting.hours.title, content: t.visiting.hours.content, note: t.visiting.hours.note },
+              { title: t.visiting.price.title, content: t.visiting.price.content, note: t.visiting.price.note },
+              { title: t.visiting.duration.title, content: t.visiting.duration.content, note: t.visiting.duration.note },
+            ].map((c) => (
+              <div class="info-card">
+                <div class="info-card-title">{c.title}</div>
+                <div class="info-card-content" style="white-space:pre-line;" set:html={renderText(c.content)}></div>
+                <div class="info-card-note" set:html={renderText(c.note)}></div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="essentials-grid">
+          {
+            t.visiting.essentials.map((e) => (
+              <div class="essentials-card">
+                <div class="essentials-icon">{e.icon}</div>
+                <div>
+                  <div class="essentials-title">{e.title}</div>
+                  <div class="essentials-text">{e.text}</div>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="bring-section" style="margin-top:3rem;">
+          <div class="bring-title">{t.visiting.tips.title}</div>
+          <ul class="bring-list">
+            {
+              t.visiting.tips.items.map((item: string) => (
+                <li set:html={renderText(item)}></li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+      <div class="reveal">
+        <div id="weather-widget"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Transportation -->
+  <section id="transportation" class="section">
+    <div class="reveal">
+      <p class="section-label">07</p>
+      <h2 class="section-title">{t.transportation.title}</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="reveal">
+      <div class="faq-list">
+        {
+          transportSections.map((sec) => (
+            <div class="faq-item expanded">
+              <div class="faq-question" style="cursor:default;">
+                <div style="display:flex;align-items:center;gap:1rem;">
+                  <span style="color:var(--color-deep);font-weight:600;">{sec.title}</span>
+                </div>
+              </div>
+              <div class="faq-answer">
+                <p style="white-space:pre-line;margin-bottom:1.5rem;" set:html={renderText(sec.content)}></p>
+                {
+                  sec.options && sec.options.length > 0 && (
+                    <div style="display:flex;flex-direction:column;gap:1rem;">
+                      {sec.options.map((opt: any) => (
+                        <div style="padding:1.25rem;background:rgba(0,0,0,0.03);border-radius:6px;">
+                          <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+                            <strong style="color:var(--color-deep);font-size:1.05rem;">{opt.name}</strong>
+                          </div>
+                          {(opt.price || opt.time) && (
+                            <div style="font-size:0.9rem;color:var(--color-earth-soft);display:flex;gap:1rem;margin-bottom:1rem;">
+                              {opt.price && <span style="color:var(--color-gold);font-weight:600;">{opt.price}</span>}
+                              {opt.time && <span>{opt.time}</span>}
+                            </div>
+                          )}
+                          {opt.description && (
+                            <p style="font-size:0.9rem;color:var(--color-earth-soft);margin-bottom:0.5rem;" set:html={renderText(opt.description)}></p>
+                          )}
+                          {opt.steps && opt.steps.length > 0 && (
+                            <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                              {opt.steps.map((step: string) => (
+                                <div style="font-size:0.9rem;color:var(--color-earth-soft);line-height:1.5;">• {renderText(step)}</div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )
+                }
+                {
+                  sec.steps && sec.steps.length > 0 && (
+                    <div style="display:flex;flex-direction:column;gap:0.75rem;background:rgba(0,0,0,0.02);padding:1.25rem;border-radius:6px;margin-top:1rem;">
+                      {sec.steps.map((step: string) => (
+                        <div style="font-size:0.9rem;color:var(--color-earth-soft);line-height:1.5;">• {renderText(step)}</div>
+                      ))}
+                    </div>
+                  )
+                }
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+    <div class="reveal">
+      <div style="margin-top:3rem;padding:2rem;background:rgba(0,0,0,0.02);border-radius:12px;border:1px solid rgba(0,0,0,0.05);">
+        <h3 style="font-family:var(--font-display);font-size:1.2rem;font-weight:600;color:var(--color-deep);margin-bottom:1rem;">{t.transportation.tips.title}</h3>
+        <ul style="padding-left:1.5rem;color:var(--color-earth-soft);line-height:1.8;">
+          {
+            t.transportation.tips.items.map((tip: string) => (
+              <li set:html={renderText(tip)}></li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section id="gallery" class="section">
+    <div class="reveal">
+      <p class="section-label">08</p>
+      <h2 class="section-title">{t.gallery.title}</h2>
+      <div class="section-divider"></div>
+    </div>
+    {
+      galleryImages.length > 0 && (
+        <>
+          <div class="reveal">
+            <div class="gallery-filters" id="gallery-filters">
+              <button class="gallery-filter active" data-filter="all" type="button">{ALL_LABELS[locale]}</button>
+              {
+                t.gallery.categories.map((c) => (
+                  <button class="gallery-filter" data-filter={c.key} type="button">{c.label}</button>
+                ))
+              }
+            </div>
+          </div>
+          <div class="reveal">
+            <div class="gallery-grid" id="gallery-grid">
+              {
+                galleryImages.map((item, i) => (
+                  <div class="gallery-item" data-index={i} data-category={item.category}>
+                    <img src={item.src} alt={`Rincón del Este gallery image ${i + 1}`} loading="lazy" />
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+          <div class="reveal">
+            <div style="text-align:center;margin-top:2rem;">
+              <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" class="google-maps-btn">
+                {t.gallery.viewMore}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M7 17L17 7M17 7H7M17 7V17"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </>
+      )
+    }
+  </section>
+
+  <!-- Reviews -->
+  <section id="reviews" class="section" style="background:linear-gradient(180deg,var(--color-cream) 0%,#e8e2d6 100%);">
+    <div class="reveal">
+      <p class="section-label">09</p>
+      <h2 class="section-title">{t.reviews.title}</h2>
+      <p class="section-subtitle">{t.reviews.subtitle}</p>
+      <div class="section-divider"></div>
+    </div>
+    <div class="reveal">
+      <div class="reviews-grid" style="margin-bottom:4rem;">
+        {
+          GOOGLE_REVIEWS.map((review) => (
+            <div class="review-card">
+              <div class="review-header">
+                <div class="review-avatar">{review.avatar}</div>
+                <div class="review-info">
+                  <div class="review-name">{review.name}</div>
+                  <div class="review-date">{review.date}</div>
+                </div>
+                <div class="review-rating">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</div>
+              </div>
+              <p class="review-text">{review.text}</p>
+              <div class="review-source">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#4285F4"></path>
+                </svg>
+                Google
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+    <div class="reveal">
+      <div style="background:#fff;border-radius:12px;padding:2.5rem;border:1px solid rgba(0,0,0,0.05);box-shadow:0 10px 30px rgba(0,0,0,0.03);">
+        <h3 style="font-family:var(--font-display);font-size:1.4rem;font-weight:600;color:var(--color-deep);margin-bottom:1rem;text-align:center;">{t.reviews.nearbyTitle}</h3>
+        <p style="text-align:center;color:var(--color-earth-soft);margin-bottom:2rem;" set:html={renderText(t.reviews.nearbyIntro)}></p>
+        <div style="display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));">
+          {
+            t.reviews.nearbyItems.map((item: any) => (
+              <div style="padding:1.5rem;background:rgba(0,0,0,0.02);border-radius:8px;">
+                <h4 style="font-family:var(--font-display);font-size:1.1rem;font-weight:600;color:var(--color-deep);margin-bottom:0.5rem;">📍 {item.name}</h4>
+                <p style="font-size:0.9rem;color:var(--color-earth-soft);line-height:1.5;" set:html={renderText(item.description)}></p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+    <div class="reveal">
+      <div style="text-align:center;margin-top:3rem;">
+        <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" class="google-maps-btn">
+          {t.reviews.viewMore}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 17L17 7M17 7H7M17 7V17"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="section">
+    <div class="section">
+      <div class="reveal">
+        <p class="section-label">10</p>
+        <h2 class="section-title">{t.faq.title}</h2>
+        <p class="section-subtitle">{t.faq.subtitle}</p>
+        <div class="section-divider"></div>
+      </div>
+      <div class="reveal">
+        <div class="faq-list">
+          {
+            t.faq.items.map((item: any) => (
+              <div class="faq-item">
+                <button class="faq-question" data-faq type="button">
+                  <span style="color:var(--color-deep);font-weight:600;">{item.question}</span>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="faq-icon">
+                    <path d="M6 9l6 6 6-6"></path>
+                  </svg>
+                </button>
+                <div class="faq-answer">
+                  {item.answer.split('\n\n').map((paragraph: string) => (
+                    <p set:html={renderText(paragraph)}></p>
+                  ))}
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Location -->
+  <section id="location" class="section">
+    <div class="reveal">
+      <p class="section-label">11</p>
+      <h2 class="section-title">{t.location.title}</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="reveal">
+      <div class="location-section">
+        <div class="location-map-container">
+          <iframe
+            src="https://www.google.com/maps?q=Reserva%20Florofaunistica%20Rincon%20del%20Este%20Merlo%20San%20Luis%20Argentina&output=embed"
+            width="800"
+            height="600"
+            style="border:0;"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Rincón del Este Location Map"
+          >
+          </iframe>
+        </div>
+        <div class="location-info">
+          <p class="location-address" style="white-space:pre-line;">{t.location.address}</p>
+          <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" class="maps-link">
+            {t.location.openMaps}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7 17L17 7M17 7H7M17 7V17"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Site Map -->
+  <section id="sitemap" class="section">
+    <div class="reveal">
+      <p class="section-label">12</p>
+      <h2 class="section-title">{t.siteMap.title}</h2>
+      <p class="about-text" style="white-space:pre-line;margin-bottom:1rem;" set:html={renderText(t.siteMap.intro)}></p>
+      <div class="sitemap-hint">{t.siteMap.hint}</div>
+    </div>
+    <div class="reveal">
+      <div class="sitemap-wrap">
+        <div class="sitemap-map" id="sitemap-map">
+          <svg class="sitemap-svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs>
+              <linearGradient id="hillGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#d9a86a" />
+                <stop offset="100%" stop-color="#b56532" />
+              </linearGradient>
+            </defs>
+            <path d="M0,300 L0,210 C60,180 90,150 150,160 C200,168 230,120 300,130 C350,137 380,110 400,120 L400,300 Z" fill="url(#hillGrad)" opacity="0.85" />
+            <path d="M0,300 L0,240 C80,225 120,205 180,212 C250,220 300,200 400,210 L400,300 Z" fill="#a8531f" opacity="0.5" />
+            <path d="M40,260 C120,235 200,250 280,225 C320,213 360,225 390,215" stroke="#faf7f2" stroke-width="2" fill="none" opacity="0.5" stroke-dasharray="4 6" />
+            <path d="M70,150 C140,170 220,150 300,135" stroke="#faf7f2" stroke-width="1.5" fill="none" opacity="0.35" stroke-dasharray="3 7" />
+          </svg>
+          {
+            t.siteMap.zones.map((z, i) => (
+              <button class="sitemap-marker" type="button" data-zone={z.key}
+                data-name={z.name} data-desc={z.desc}
+                style={"top:${MARKER_POS[z.key].top};left:${MARKER_POS[z.key].left};"}>
+                {i + 1}
+              </button>
+            ))
+          }
+        </div>
+        <div class="sitemap-detail" id="sitemap-detail">
+          <div class="sitemap-detail-index" id="sitemap-detail-index">01</div>
+          <h3 class="sitemap-detail-name" id="sitemap-detail-name"></h3>
+          <p class="sitemap-detail-desc" id="sitemap-detail-desc"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Itinerary -->
+  <section id="itinerary" class="section" style="background:rgba(0,0,0,0.02);">
+    <div class="reveal">
+      <p class="section-label">13</p>
+      <h2 class="section-title">{t.itinerary.title}</h2>
+      <p class="about-text" style="white-space:pre-line;margin-bottom:3rem;" set:html={renderText(t.itinerary.intro)}></p>
+    </div>
+    <div class="reveal">
+      <div class="timeline">
+        {
+          t.itinerary.steps.map((s) => (
+            <div class="timeline-item">
+              <div class="timeline-time">{s.time}</div>
+              <div class="timeline-marker"><span class="timeline-dot"></span></div>
+              <div class="timeline-card">
+                <h4 class="timeline-title">{s.title}</h4>
+                <p class="timeline-text">{s.text}</p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-links">
+      <p class="footer-links-title">{t.footer.linksTitle}</p>
+      <div class="footer-links-grid">
+        {
+          t.footer.links.map((link: any) => (
+            <a href={link.url} target="_blank" rel="noopener noreferrer" class="footer-link-item">
+              {link.name}
+            </a>
+          ))
+        }
+      </div>
+      <div style="margin-top:1.25rem;text-align:center;">
+        <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" class="google-maps-btn">Google Maps →</a>
+      </div>
+    </div>
+    <div class="footer-legal" style="max-width:1100px;margin:0 auto;padding:1rem 2rem 0;text-align:center;">
+      <a href="/privacy" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.8rem;margin-right:1.5rem;">Privacy Policy</a>
+      <a href="/terms" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.8rem;margin-right:1.5rem;">Terms of Service</a>
+      <a href="/cookies" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.8rem;">Cookie Settings</a>
+    </div>
+    <p class="footer-text" style="margin-top:2rem;font-size:0.9rem;font-weight:600;color:var(--color-gold);">{t.footer.callToAction}</p>
+    <p class="footer-text" style="margin-top:1rem;white-space:pre-line;">{t.footer.text}</p>
+  </footer>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox" style="display:none;">
+    <button id="lightbox-close" class="lightbox-close" type="button">×</button>
+    <button id="lightbox-prev" class="lightbox-prev" type="button">‹</button>
+    <img id="lightbox-img" class="lightbox-img" src="" alt="" />
+    <div id="lightbox-caption" class="lightbox-caption"></div>
+    <button id="lightbox-next" class="lightbox-next" type="button">›</button>
+  </div>
+</BaseLayout>
