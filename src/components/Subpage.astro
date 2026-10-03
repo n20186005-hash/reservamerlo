@@ -26,8 +26,8 @@ function renderText(text: string): string {
     .join('');
 }
 
-const subpath = `/${slugFor[pageKey]}/`;
-const breadcrumb = [{ name: page.crumb, url: subpath }];
+const relPath = `/${locale}/${slugFor[pageKey]}/`;
+const breadcrumb = [{ name: page.crumb, url: relPath }];
 const relatedLinks = page.related.map((k) => ({
   title: subpageLabel[locale][k],
   url: `/${locale}/${slugFor[k]}/`,
@@ -39,8 +39,10 @@ const seo = subpages[pageKey][locale];
   locale={locale}
   title={seo.title}
   description={seo.description}
-  path={subpath}
+  path={relPath}
   breadcrumb={breadcrumb}
+  ogTitle={seo.title}
+  ogDescription={seo.description}
 >
   <nav class="site-nav" id="site-nav">
     <div style="display:flex;align-items:center;gap:1.5rem;">

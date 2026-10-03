@@ -11,10 +11,12 @@ interface Props {
   description: string;
   path?: string;
   breadcrumb?: { name: string; url: string }[];
+  ogTitle?: string;
+  ogDescription?: string;
   includeSchema?: boolean;
 }
 
-const { locale, title, description, path, breadcrumb, includeSchema = true } = Astro.props as Props;
+const { locale, title, description, path, breadcrumb, ogTitle, ogDescription, includeSchema = true } = Astro.props as Props;
 const cfg = localeConfig[locale] || localeConfig.es;
 const site = Astro.site ? Astro.site.href.replace(/\/$/, '') : 'https://reservamerlo.com';
 const relPath = path ?? `/${locale}/`;
@@ -76,8 +78,8 @@ const breadcrumbSchema = breadcrumb
         .map((c) => <meta property="og:alternate_locale" content={c.ogLocale} />)
     }
     <meta property="og:url" content={canonical} />
-    <meta property="og:title" content={seo.ogTitle} />
-    <meta property="og:description" content={seo.ogDescription} />
+    <meta property="og:title" content={ogTitle ?? seo.ogTitle} />
+    <meta property="og:description" content={ogDescription ?? seo.ogDescription} />
     <meta property="og:site_name" content={seo.siteName} />
     <meta property="og:image" content={ogImage} />
     <meta name="twitter:card" content="summary_large_image" />
