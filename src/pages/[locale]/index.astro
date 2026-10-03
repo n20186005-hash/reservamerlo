@@ -35,6 +35,46 @@ const MARKER_POS: Record<string, { top: string; left: string }> = {
 
 const LANG_LABELS: Record<Locale, string> = { zh: '中文', en: 'EN', es: 'ES', it: 'IT' };
 
+// Subpage URLs + localized labels for quick-travel-intent navigation
+const SUB = (p: string) => `/${locale}${p}`;
+const QUICK: Record<Locale, { entradas: string; horarios: string; llegar: string; fotos: string }> = {
+  es: { entradas: 'Entradas', horarios: 'Horarios', llegar: 'Cómo llegar', fotos: 'Fotos' },
+  en: { entradas: 'Tickets', horarios: 'Hours', llegar: 'How to get there', fotos: 'Photos' },
+  zh: { entradas: '门票', horarios: '开放时间', llegar: '怎么去', fotos: '照片' },
+  it: { entradas: 'Ingresso', horarios: 'Orari', llegar: 'Come arrivare', fotos: 'Foto' },
+};
+
+const SUBPAGE_CARDS: Record<Locale, { title: string; desc: string; url: string }[]> = {
+  es: [
+    { title: 'Entradas y Precios', desc: 'Arancel de ingreso, dónde pagar, efectivo, niños, jubilados y residentes.', url: SUB('/entradas/') },
+    { title: 'Horarios', desc: 'Horario de apertura, mejor época y duración recomendada de la visita.', url: SUB('/horarios/') },
+    { title: 'Cómo llegar', desc: 'Desde Merlo, estacionamiento, mapa y opciones de transporte.', url: SUB('/como-llegar/') },
+    { title: 'Fotos', desc: 'Paisajes, senderos, flora, fauna, miradores y el arroyo de Rincón del Este.', url: SUB('/fotos/') },
+    { title: 'Qué hacer en Merlo', desc: '15 lugares y paseos imprescindibles en Merlo, San Luis.', url: SUB('/que-hacer-en-merlo-san-luis/') },
+  ],
+  en: [
+    { title: 'Tickets & Prices', desc: 'Entry fee, where to pay, cash, children, seniors and residents.', url: SUB('/entradas/') },
+    { title: 'Opening Hours', desc: 'Opening times, best season and recommended visit duration.', url: SUB('/horarios/') },
+    { title: 'How to get there', desc: 'From Merlo, parking, map and transport options.', url: SUB('/como-llegar/') },
+    { title: 'Photos', desc: 'Landscapes, trails, flora, fauna, viewpoints and the stream of Rincón del Este.', url: SUB('/fotos/') },
+    { title: 'Things to do in Merlo', desc: '15 unmissable places and walks in Merlo, San Luis.', url: SUB('/que-hacer-en-merlo-san-luis/') },
+  ],
+  zh: [
+    { title: '门票与价格', desc: '入园费用、在哪里付款、现金、儿童、老人与居民优惠。', url: SUB('/entradas/') },
+    { title: '开放时间', desc: '开放时段、最佳季节与建议游玩时长。', url: SUB('/horarios/') },
+    { title: '怎么去', desc: '从梅洛出发、停车、地图与交通方式。', url: SUB('/como-llegar/') },
+    { title: '照片', desc: 'Rincón del Este 的风景、步道、动植物、观景台与溪流。', url: SUB('/fotos/') },
+    { title: '梅洛玩什么', desc: '圣路易斯梅洛 15 个必去景点与散步路线。', url: SUB('/que-hacer-en-merlo-san-luis/') },
+  ],
+  it: [
+    { title: 'Ingresso e Prezzi', desc: 'Tariffa, dove pagare, contanti, bambini, anziani e residenti.', url: SUB('/entradas/') },
+    { title: 'Orari', desc: 'Orari di apertura, stagione migliore e durata consigliata.', url: SUB('/horarios/') },
+    { title: 'Come arrivare', desc: 'Da Merlo, parcheggio, mappa e opzioni di trasporto.', url: SUB('/como-llegar/') },
+    { title: 'Foto', desc: 'Paesaggi, sentieri, flora, fauna, mirador e il ruscello di Rincón del Este.', url: SUB('/fotos/') },
+    { title: 'Cosa fare a Merlo', desc: '15 luoghi e passeggiate imperdibili a Merlo, San Luis.', url: SUB('/que-hacer-en-merlo-san-luis/') },
+  ],
+};
+
 const GOOGLE_REVIEWS = [
   { name: 'Lucía M.', avatar: 'LM', rating: 5, date: '2025-06-18', text: 'La Reserva de Rincón del Este es un lujo de tranquilidad. Caminamos los senderos interpretativos al amanecer y vimos chimangos, colibríes y hasta una vizcacha entre las rocas. Ideal para ir con la familia desde Merlo.' },
   { name: 'Tom H.', avatar: 'TH', rating: 5, date: '2025-05-22', text: 'A hidden gem near Merlo. The native woodland and the sierra light are beautiful, and the guides explained the flora without rushing. Bring water and a hat — the sun is no joke here.' },
@@ -440,6 +480,11 @@ const extra = PAGE_ENHANCEMENTS[locale];
         <a href="#reviews">{t.nav.reviews}</a>
         <a href="#faq">{t.nav.faq}</a>
         <a href="#location">{t.nav.location}</a>
+        <a href={SUB('/entradas/')}>{QUICK.entradas}</a>
+        <a href={SUB('/horarios/')}>{QUICK.horarios}</a>
+        <a href={SUB('/como-llegar/')}>{QUICK.llegar}</a>
+        <a href={SUB('/fotos/')}>{QUICK.fotos}</a>
+        <a href={SUB('/que-hacer-en-merlo-san-luis/')}>Merlo</a>
         <a href="#sitemap">{t.siteMap.title}</a>
         <a href="#itinerary">{t.itinerary.title}</a>
       </div>
@@ -508,14 +553,36 @@ const extra = PAGE_ENHANCEMENTS[locale];
         <a href="#visiting" class="hero-cta-secondary">{t.visiting.title}</a>
         <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" class="hero-cta-secondary">{t.location.openMaps}</a>
       </div>
+      <div class="hero-quicklinks">
+        <a href={SUB('/entradas/')} class="hero-quicklink">{QUICK.entradas}</a>
+        <a href={SUB('/horarios/')} class="hero-quicklink">{QUICK.horarios}</a>
+        <a href={SUB('/como-llegar/')} class="hero-quicklink">{QUICK.llegar}</a>
+        <a href={SUB('/fotos/')} class="hero-quicklink">{QUICK.fotos}</a>
+      </div>
     </div>
     <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit;">
       <div class="hero-meta">
         <div class="hero-rating">4.6</div>
         <div class="hero-stars">★ ★ ★ ★ ★</div>
-        <div class="hero-reviews">12,105 {t.rating.reviews} · {t.rating.source}</div>
+        <div class="hero-reviews">12,209 {t.rating.reviews} · {t.rating.source}</div>
       </div>
     </a>
+  </section>
+
+  <!-- Quick travel-intent summary (internal linking to subpages) -->
+  <section class="section" style="padding-top:3rem;padding-bottom:3rem;">
+    <div class="reveal">
+      <div class="quick-links-grid">
+        {
+          SUBPAGE_CARDS[locale].map((card) => (
+            <a href={card.url} class="quick-link-card">
+              <h3 class="quick-link-title">{card.title}</h3>
+              <p class="quick-link-desc">{card.desc}</p>
+            </a>
+          ))
+        }
+      </div>
+    </div>
   </section>
 
   <!-- Name Disambiguation -->

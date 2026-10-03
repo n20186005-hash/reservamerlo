@@ -66,6 +66,82 @@
   transform: translateY(-2px);
 }
 
+/* ─── Hero quick links (mobile-first travel intents) ─── */
+.hero-quicklinks {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 1rem;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 1s;
+}
+
+.hero-quicklink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.6rem 1.15rem;
+  border-radius: 100px;
+  text-decoration: none;
+  backdrop-filter: blur(4px);
+  transition: all 0.25s ease;
+}
+
+.hero-quicklink:hover {
+  background: var(--color-gold);
+  color: var(--color-deep);
+  border-color: var(--color-gold);
+  transform: translateY(-2px);
+}
+
+/* ─── Homepage subpage summary cards ─── */
+.quick-links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+
+.quick-link-card {
+  display: block;
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  transition: all 0.25s ease;
+}
+
+.quick-link-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  border-color: var(--color-gold);
+}
+
+.quick-link-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--color-deep);
+  margin: 0 0 0.4rem;
+}
+
+.quick-link-desc {
+  font-size: 0.9rem;
+  color: var(--color-earth-soft);
+  line-height: 1.6;
+  margin: 0;
+}
+
 /* ─── Essentials (icon cards) ─── */
 .essentials-grid {
   display: grid;
@@ -590,6 +666,17 @@
   .hero-cta-group {
     flex-direction: column;
     align-items: center;
+  }
+  .hero-quicklinks {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero-quicklink {
+    justify-content: center;
   }
   .mission-panel,
   .history-timeline-panel {

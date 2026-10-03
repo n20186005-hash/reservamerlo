@@ -1,0 +1,92 @@
+---
+import Subpage from '../../components/Subpage.astro';
+import type { Locale } from '../../i18n/config';
+import galleryImagesData from '../../gallery-data.json';
+
+export function getStaticPaths() {
+  return (['es', 'en', 'zh', 'it'] as Locale[]).map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+
+const galleryImages = (galleryImagesData as string[]);
+
+// Distribute the 22 images into 7 intent categories
+const FOTOS_PLAN: Record<string, { from: number; to: number }> = {
+  paisajes: { from: 0, to: 4 },
+  senderos: { from: 5, to: 8 },
+  flora: { from: 9, to: 11 },
+  fauna: { from: 12, to: 15 },
+  miradores: { from: 16, to: 18 },
+  arroyo: { from: 19, to: 20 },
+  entrada: { from: 21, to: 21 },
+};
+
+function categoryForIndex(i: number): string {
+  for (const [key, range] of Object.entries(FOTOS_PLAN)) {
+    if (i >= range.from && i <= range.to) return key;
+  }
+  return 'paisajes';
+}
+
+const CATEGORY_LABELS: Record<Locale, Record<string, string>> = {
+  es: { all: 'Todas', paisajes: 'Paisajes', senderos: 'Senderos', flora: 'Flora', fauna: 'Fauna', miradores: 'Miradores', arroyo: 'Arroyo', entrada: 'Entrada' },
+  en: { all: 'All', paisajes: 'Landscapes', senderos: 'Trails', flora: 'Flora', fauna: 'Fauna', miradores: 'Viewpoints', arroyo: 'Stream', entrada: 'Entrance' },
+  zh: { all: '全部', paisajes: '风景', senderos: '步道', flora: '植物', fauna: '动物', miradores: '观景台', arroyo: '溪流', entrada: '入口' },
+  it: { all: 'Tutte', paisajes: 'Paesaggi', senderos: 'Sentieri', flora: 'Flora', fauna: 'Fauna', miradores: 'Mirador', arroyo: 'Ruscello', entrada: 'Ingresso' },
+};
+
+const ALT_TEXT: Record<Locale, Record<string, string>> = {
+  es: { paisajes: 'Paisaje de la Reserva Rincón del Este, Merlo', senderos: 'Sendero de la Reserva Rincón del Este', flora: 'Flora nativa de Rincón del Este', fauna: 'Fauna de Rincón del Este', miradores: 'Mirador de Rincón del Este', arroyo: 'Arroyo de Rincón del Este', entrada: 'Entrada a la Reserva Rincón del Este' },
+  en: { paisajes: 'Landscape of Rincón del Este Reserve, Merlo', senderos: 'Trail of Rincón del Este Reserve', flora: 'Native flora of Rincón del Este', fauna: 'Fauna of Rincón del Este', miradores: 'Viewpoint of Rincón del Este', arroyo: 'Stream of Rincón del Este', entrada: 'Entrance to Rincón del Este Reserve' },
+  zh: { paisajes: 'Rincón del Este 保护区风景', senderos: 'Rincón del Este 步道', flora: 'Rincón del Este 原生植物', fauna: 'Rincón del Este 动物', miradores: 'Rincón del Este 观景台', arroyo: 'Rincón del Este 溪流', entrada: 'Rincón del Este 保护区入口' },
+  it: { paisajes: 'Paesaggio della Riserva Rincón del Este, Merlo', senderos: 'Sentiero della Riserva Rincón del Este', flora: 'Flora nativa di Rincón del Este', fauna: 'Fauna di Rincón del Este', miradores: 'Mirador di Rincón del Este', arroyo: 'Ruscello di Rincón del Este', entrada: 'Ingresso alla Riserva Rincón del Este' },
+};
+
+const CAT_KEYS = ['paisajes', 'senderos', 'flora', 'fauna', 'miradores', 'arroyo', 'entrada'];
+const site = 'https://reservamerlo.com';
+const imageSchema = {
+  '@context': 'https://schema.org',
+  '@graph': galleryImages.map((src, i) => ({
+    '@type': 'ImageObject',
+    contentUrl: `${site}${src}`,
+    name: ALT_TEXT[locale][categoryForIndex(i)],
+    about: 'Reserva Florofaunística de Rincón del Este, Merlo, San Luis, Argentina',
+  })),
+};
+---
+
+<Subpage locale={locale} pageKey="fotos">
+  <div class="reveal">
+    <div class="gallery-filters" id="gallery-filters">
+      <button class="gallery-filter active" data-filter="all" type="button">{CATEGORY_LABELS[locale].all}</button>
+      {
+        CAT_KEYS.map((k) => (
+          <button class="gallery-filter" data-filter={k} type="button">{CATEGORY_LABELS[locale][k]}</button>
+        ))
+      }
+    </div>
+  </div>
+  <div class="reveal">
+    <div class="gallery-grid" id="gallery-grid">
+      {
+        galleryImages.map((src, i) => {
+          const cat = categoryForIndex(i);
+          return (
+            <div class="gallery-item" data-index={i} data-category={cat}>
+              <img src={src} alt={ALT_TEXT[locale][cat]} loading="lazy" />
+            </div>
+          );
+        })
+      }
+    </div>
+  </div>
+  <div id="lightbox" class="lightbox" style="display:none;">
+    <button id="lightbox-close" class="lightbox-close" type="button">×</button>
+    <button id="lightbox-prev" class="lightbox-prev" type="button">‹</button>
+    <img id="lightbox-img" class="lightbox-img" src="" alt="" />
+    <div id="lightbox-caption" class="lightbox-caption"></div>
+    <button id="lightbox-next" class="lightbox-next" type="button">›</button>
+  </div>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(imageSchema)}></script>
+</Subpage>

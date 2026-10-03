@@ -1,0 +1,156 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import type { Locale } from '../i18n/config';
+import { subpages, subpageLabel, slugFor, type SubpageKey } from '../i18n/subpages';
+import { merloPlaces, merloItineraries } from '../i18n/subpages';
+
+interface Props {
+  locale: Locale;
+  pageKey: SubpageKey;
+}
+
+const { locale, pageKey } = Astro.props;
+const page = subpages[pageKey][locale];
+const MAPS_URL = 'https://maps.app.goo.gl/cUvY92vJJYcx1b9n7';
+const LANG_LABELS: Record<Locale, string> = { zh: '中文', en: 'EN', es: 'ES', it: 'IT' };
+const LOCALES: Locale[] = ['zh', 'en', 'es', 'it'];
+
+function renderText(text: string): string {
+  if (!text) return '';
+  return text
+    .split(/(\*\*.*?\*\*)/g)
+    .map((part) => {
+      if (part.startsWith('**') && part.endsWith('**')) return `<strong>${part.slice(2, -2)}</strong>`;
+      return part;
+    })
+    .join('');
+}
+
+const subpath = `/${slugFor[pageKey]}/`;
+const breadcrumb = [{ name: page.crumb, url: subpath }];
+const relatedLinks = page.related.map((k) => ({
+  title: subpageLabel[locale][k],
+  url: `/${locale}/${slugFor[k]}/`,
+}));
+const seo = subpages[pageKey][locale];
+---
+
+<BaseLayout
+  locale={locale}
+  title={seo.title}
+  description={seo.description}
+  path={subpath}
+  breadcrumb={breadcrumb}
+>
+  <nav class="site-nav" id="site-nav">
+    <div style="display:flex;align-items:center;gap:1.5rem;">
+      <a href={`/${locale}/`} style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:#fff;text-decoration:none;">Rincón del Este</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:2rem;">
+      <a href={`/${locale}/`} style="font-family:var(--font-body);font-size:0.8rem;font-weight:500;color:rgba(255,255,255,0.7);text-decoration:none;">← {locale === 'es' ? 'Inicio' : locale === 'en' ? 'Home' : locale === 'zh' ? '首页' : 'Home'}</a>
+      <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme" type="button">
+        <span class="theme-icon-sun">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </span>
+        <span class="theme-icon-moon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </span>
+      </button>
+      <div class="lang-switcher">
+        {
+          LOCALES.map((l) => (
+            <button class={l === locale ? 'lang-btn active' : 'lang-btn'} data-locale={l} type="button">
+              {LANG_LABELS[l]}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </nav>
+
+  <section class="section" style="padding-top:8rem;">
+    <div class="reveal">
+      <h1 class="section-title">{page.h1}</h1>
+      <div class="section-divider"></div>
+      <p class="about-text" style="white-space:pre-line;" set:html={renderText(page.lede)}></p>
+    </div>
+
+    {
+      page.sections.map((sec) => (
+        <div class="reveal">
+          <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:650;color:var(--color-deep);margin:2.5rem 0 1rem;">{sec.heading}</h2>
+          <p class="about-text" style="white-space:pre-line;" set:html={renderText(sec.body)}></p>
+        </div>
+      ))
+    }
+
+    <slot />
+
+    {
+      pageKey === 'merloGuide' && (
+        <>
+          <div class="reveal">
+            <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:650;color:var(--color-deep);margin:2.5rem 0 1rem;">
+              {locale === 'es' ? '15 lugares y paseos' : locale === 'en' ? '15 places & walks' : locale === 'zh' ? '15 个景点与散步路线' : '15 luoghi e passeggiate'}
+            </h2>
+            <div class="quick-links-grid">
+              {merloPlaces.map((p) => (
+                <div class="quick-link-card">
+                  <h3 class="quick-link-title">{p.name}</h3>
+                  <p class="quick-link-desc">{p.desc[locale]}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div class="reveal">
+            <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:650;color:var(--color-deep);margin:2.5rem 0 1rem;">
+              {locale === 'es' ? 'Itinerarios sugeridos' : locale === 'en' ? 'Suggested itineraries' : locale === 'zh' ? '建议行程' : 'Itinerari consigliati'}
+            </h2>
+            {merloItineraries.map((it) => (
+              <div style="margin-bottom:1.5rem;">
+                {it.map((step) => (
+                  <div style="display:flex;gap:1rem;padding:0.75rem 0;border-bottom:1px solid rgba(0,0,0,0.06);">
+                    <div style="font-weight:700;color:var(--color-gold);min-width:64px;">{step.time}</div>
+                    <div>
+                      <div style="font-weight:600;color:var(--color-deep);">{step.title[locale]}</div>
+                      <div style="font-size:0.9rem;color:var(--color-earth-soft);line-height:1.6;">{step.text[locale]}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </>
+      )
+    }
+
+    <div class="reveal">
+      <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:650;color:var(--color-deep);margin:2.5rem 0 1rem;">
+        {locale === 'es' ? 'También te puede interesar' : locale === 'en' ? 'You may also like' : locale === 'zh' ? '你可能还感兴趣' : 'Potrebbe interessarti anche'}
+      </h2>
+      <div class="quick-links-grid">
+        {
+          relatedLinks.map((l) => (
+            <a href={l.url} class="quick-link-card">
+              <h3 class="quick-link-title">{l.title}</h3>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-links">
+      <p class="footer-links-title">Rincón del Este</p>
+      <div style="text-align:center;">
+        <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" class="google-maps-btn">Google Maps →</a>
+      </div>
+    </div>
+    <div class="footer-legal" style="max-width:1100px;margin:0 auto;padding:1rem 2rem 0;text-align:center;">
+      <a href="/privacy" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.8rem;margin-right:1.5rem;">Privacy Policy</a>
+      <a href="/terms" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.8rem;margin-right:1.5rem;">Terms of Service</a>
+      <a href="/cookies" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.8rem;">Cookie Settings</a>
+    </div>
+  </footer>
+</BaseLayout>

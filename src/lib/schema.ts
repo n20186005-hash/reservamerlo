@@ -1,5 +1,5 @@
 export function generateSchema(locale: string, baseUrl: string) {
-  const localUrl = `${baseUrl}/${locale}`;
+  const localUrl = `${baseUrl}/${locale}/`;
 
   const name =
     locale === 'es'
@@ -166,7 +166,7 @@ export function generateSchema(locale: string, baseUrl: string) {
         aggregateRating: {
           '@type': 'AggregateRating',
           ratingValue: '4.6',
-          reviewCount: '12105',
+          reviewCount: '12209',
           bestRating: '5',
         },
       },

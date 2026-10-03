@@ -13,7 +13,7 @@ export default defineConfig({
     },
   },
   redirects: {
-    '/': '/es',
+    '/': '/es/',
   },
   integrations: [
     sitemap({
